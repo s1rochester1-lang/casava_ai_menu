@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html class="light" lang="en"><head>
@@ -489,7 +490,7 @@
 <div class="space-y-6">
 <div class="bg-stone-100 dark:bg-stone-900 rounded-2xl p-6 h-fit border border-outline-variant/20 shadow-xl lg:shadow-none sticky top-24">
 <div class="mb-6">
-<h2 class="font-['Noto_Serif'] text-2xl text-[#6f5c2b] font-black">Your Selection</h2>
+<h2 class="font-['Noto_Serif'] text-2xl text-[#6f5c2b] font-black">Order Summary</h2>
 <p class="font-['Be_Vietnam_Pro'] text-sm font-medium uppercase tracking-widest text-stone-500 mt-1">Summary &amp; Total</p>
 </div>
 <div class="space-y-4 mb-8 max-h-[400px] overflow-y-auto no-scrollbar" id="summary-items">
@@ -511,17 +512,9 @@
 <span class="font-bold text-xl text-primary">Total</span>
 <span class="font-black text-2xl text-primary" id="total-display">$0.00</span>
 </div>
-<button class="w-full bg-[#006d42] text-white py-4 rounded-lg font-bold text-sm uppercase tracking-[0.1em] hover:shadow-lg hover:-translate-y-0.5 transition-all">
-                            Send Catering Request
+<button id="submitCateringBtn" onclick="submitCateringRequest()" class="w-full bg-[#006d42] text-white py-4 rounded-lg font-bold text-sm uppercase tracking-[0.1em] hover:shadow-lg hover:-translate-y-0.5 transition-all">
+                            Submit Catering Request
                         </button>
-</div>
-</div>
-<div class="p-6 bg-primary-container/10 rounded-xl border border-primary-container/20">
-<div class="flex items-center gap-3 mb-3 text-primary">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">info</span>
-<h4 class="font-bold text-sm">Catering Note</h4>
-</div>
-<p class="text-xs text-on-surface-variant leading-relaxed">Please submit requests at least 72 hours in advance. Large orders over $1,000 require a 50% deposit.</p>
 </div>
 </div>
 </aside>
@@ -589,5 +582,45 @@
 
     // Initialize summary on load
     window.onload = updateSummary;
+</script>
+<script>
+  async function submitCateringRequest() {
+    const WEBHOOK_URL = "https://casava-ai.app.n8n.cloud/webhook/catering-request";
+
+    const btn = document.getElementById("submitCateringBtn");
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+
+    const payload = {
+      first_name:    document.querySelector("input[placeholder='Enter your first name']")?.value || "",
+      last_name:     document.querySelector("input[placeholder='Enter your last name']")?.value || "",
+      email:         document.querySelector("input[type='email']")?.value || "",
+      phone:         document.querySelector("input[type='tel']")?.value || "",
+      event_type:    document.querySelector("input[name='event_type']:checked")?.value || "",
+      business_name: document.querySelector("input[placeholder='Legal entity name']")?.value || "",
+      tax_number:    document.querySelector("input[placeholder='EIN or VAT Registration']")?.value || "",
+      order_total:   document.getElementById("total-display")?.textContent?.trim() || "",
+      timestamp:     new Date().toISOString(),
+    };
+
+    try {
+      const response = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        btn.textContent = "✓ Request Submitted!";
+        btn.classList.replace("bg-[#006d42]", "bg-green-700");
+      } else {
+        throw new Error("Server responded with " + response.status);
+      }
+    } catch (err) {
+      console.error("Webhook error:", err);
+      btn.textContent = "Failed — Try Again";
+      btn.disabled = false;
+    }
+  }
 </script>
 </body></html>
