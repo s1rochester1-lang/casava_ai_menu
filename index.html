@@ -98,12 +98,10 @@
 <div class="hidden md:flex items-center gap-8">
 <a class="text-stone-600 dark:text-stone-400 hover:text-[#a73918] transition-colors duration-300 font-medium" href="#">Menu</a>
 <a class="text-[#6f5c2b] dark:text-[#BEA66D] border-b-2 border-[#6f5c2b] font-bold" href="#">Catering</a>
-<a class="text-stone-600 dark:text-stone-400 hover:text-[#a73918] transition-colors duration-300 font-medium" href="#">About</a>
-<button class="bg-primary text-on-primary px-6 py-2 rounded-lg font-bold hover:scale-95 transition-transform">Order Now</button>
 </div>
 </div>
 </nav>
-<!-- Hero Section Matched with SCREEN_39 -->
+<!-- Hero Section -->
 <section class="relative h-[819px] flex items-center overflow-hidden">
 <div class="absolute inset-0 z-0">
 <img alt="Gourmet Creole spread" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6vddLy5FvWuqf0AnJZ75FSHgmhw-o49YR--5rmVe-IHG-5h620PFwFc6CgOgng7M8bA40LOTtlgoxN6G974gyjpEfUt8o3s_7zb01rvt2Sy4wcLd3b2cAyNCz6T6Bopgvriqfiq8_sqL_nUyT9g8gl3_Ufl6VSydxnDxApTbpWcGbDsVm_8F4qZMkBs_BlCBNB4Eu31jLIbCxjoVHCqwjINp12l_mc6C1RmIeu2y1QKesPbK0A-w1K9_rOT0mn2H1gxQS_B9a65E"/>
@@ -123,7 +121,7 @@
 <img alt="Spices and ingredients" class="asymmetric-crop w-full aspect-[4/5] object-cover shadow-2xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqVePzLneHL6Si9Po-KYTjA9VvEmEcabnF1eX4r_psWZE3H2XptPyc0Q7PFYA37iEm8rGdJtILSOjh44E8flc_D9-p6Brpampuxw_jF63xnO-ebBYIedyZsCFyWj5_pDWKT-PmmHFqKQdFzarI6gSFJQZGvI1bDj1bnYuvQKs7iPoGdnF0z42gRXfzZSyw6tqXpLHWDWC3mb7QUZ1z_Oc6iNbdT8NaZfHsqwoKmMqYqH8mR7iP9rxYa7naTIzn7xkTFDU2Pd_AZvA"/>
 <div class="absolute -bottom-6 -left-6 bg-surface-container-lowest p-6 rounded-xl shadow-xl max-w-xs border border-outline-variant/10">
 <p class="font-headline italic text-primary text-xl mb-2">"A symphony of heat and heart."</p>
-<p class="text-xs tracking-widest uppercase font-bold text-outline">EXECUTIVE CHEF FRED ALEXANDER</p>
+<p class="text-xs tracking-widest uppercase font-bold text-outline">Executive Chef Fred Alexander</p>
 </div>
 </div>
 </div>
@@ -156,16 +154,16 @@
 <label class="font-label text-xs font-bold uppercase tracking-wider text-outline">Event Type</label>
 <div class="flex gap-6">
 <label class="flex items-center gap-3 cursor-pointer group">
-<input checked="" class="w-5 h-5 text-primary focus:ring-primary border-outline-variant" name="event_type" type="radio" value="personal"/>
+<input checked="" class="w-5 h-5 text-primary focus:ring-primary border-outline-variant" name="event_type" onchange="toggleBusinessFields()" type="radio" value="personal"/>
 <span class="text-on-surface font-medium group-hover:text-primary transition-colors">Personal</span>
 </label>
 <label class="flex items-center gap-3 cursor-pointer group">
-<input class="w-5 h-5 text-primary focus:ring-primary border-outline-variant" name="event_type" type="radio" value="business"/>
+<input class="w-5 h-5 text-primary focus:ring-primary border-outline-variant" name="event_type" onchange="toggleBusinessFields()" type="radio" value="business"/>
 <span class="text-on-surface font-medium group-hover:text-primary transition-colors">Business / Corporate</span>
 </label>
 </div>
 </div>
-<div class="col-span-full grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+<div class="col-span-full grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 hidden" id="business-fields">
 <div class="space-y-2">
 <label class="font-label text-xs font-bold uppercase tracking-wider text-outline">Business Name</label>
 <input class="w-full bg-surface-container-high border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all" placeholder="Legal entity name" type="text"/>
@@ -182,7 +180,7 @@
 <h2 class="text-3xl font-black text-primary">Catering Menu</h2>
 <p class="text-sm font-label font-bold text-tertiary">SELECT QUANTITY &amp; SIZE</p>
 </div>
-<div class="space-y-16">
+<div class="space-y-16" id="catering-menu">
 <!-- Chicken Category -->
 <div class="space-y-6">
 <h3 class="text-xl font-bold text-secondary flex items-center gap-2">
@@ -190,45 +188,72 @@
                         </h3>
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 <div class="bg-surface-container-low p-6 rounded-xl hover:bg-surface-container transition-colors duration-300 border border-transparent hover:border-primary-container/20">
-<h4 class="font-bold text-lg mb-4">Jazzy Jerk Chicken</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Jazzy Jerk Chicken</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10 cursor-pointer hover:border-primary-container/50">
-<div class="flex items-center gap-3"><input class="rounded text-primary focus:ring-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$9.75</span>
-</label>
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10 cursor-pointer hover:border-primary-container/50">
-<div class="flex items-center gap-3"><input class="rounded text-primary focus:ring-primary" type="checkbox"/><span class="text-sm font-medium">Small Tray (~13 pcs)</span></div><span class="text-sm font-bold text-primary">$110.00</span>
-</label>
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10 cursor-pointer hover:border-primary-container/50">
-<div class="flex items-center gap-3"><input class="rounded text-primary focus:ring-primary" type="checkbox"/><span class="text-sm font-medium">Large Tray (~26 pcs)</span></div><span class="text-sm font-bold text-primary">$215.00</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Jazzy Jerk Chicken" data-price="9.75" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$9.75</span>
+</div>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Jazzy Jerk Chicken" data-price="110.00" data-size="Small Tray (~13 pcs)" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Small Tray (~13 pcs)</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$110.00</span>
+</div>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Jazzy Jerk Chicken" data-price="215.00" data-size="Large Tray (~26 pcs)" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Large Tray (~26 pcs)</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$215.00</span>
+</div>
 </div>
 </div>
 <div class="bg-surface-container-low p-6 rounded-xl hover:bg-surface-container transition-colors duration-300 border border-transparent hover:border-primary-container/20">
-<h4 class="font-bold text-lg mb-4">Honey Garlic Chicken</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Honey Garlic Chicken</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10 cursor-pointer hover:border-primary-container/50">
-<div class="flex items-center gap-3"><input class="rounded text-primary focus:ring-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$9.40</span>
-</label>
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10 cursor-pointer hover:border-primary-container/50">
-<div class="flex items-center gap-3"><input class="rounded text-primary focus:ring-primary" type="checkbox"/><span class="text-sm font-medium">Small Tray (~20 pcs)</span></div><span class="text-sm font-bold text-primary">$113.00</span>
-</label>
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10 cursor-pointer hover:border-primary-container/50">
-<div class="flex items-center gap-3"><input class="rounded text-primary focus:ring-primary" type="checkbox"/><span class="text-sm font-medium">Large Tray (~40 pcs)</span></div><span class="text-sm font-bold text-primary">$220.50</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Honey Garlic Chicken" data-price="9.40" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$9.40</span>
+</div>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Honey Garlic Chicken" data-price="113.00" data-size="Small Tray (~20 pcs)" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Small Tray (~20 pcs)</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$113.00</span>
+</div>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Honey Garlic Chicken" data-price="220.50" data-size="Large Tray (~40 pcs)" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Large Tray (~40 pcs)</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$220.50</span>
+</div>
 </div>
 </div>
 <div class="bg-surface-container-low p-6 rounded-xl hover:bg-surface-container transition-colors duration-300 border border-transparent hover:border-primary-container/20">
-<h4 class="font-bold text-lg mb-4">Georgia Fried Chicken</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Georgia Fried Chicken</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10 cursor-pointer hover:border-primary-container/50">
-<div class="flex items-center gap-3"><input class="rounded text-primary focus:ring-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$9.75</span>
-</label>
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10 cursor-pointer hover:border-primary-container/50">
-<div class="flex items-center gap-3"><input class="rounded text-primary focus:ring-primary" type="checkbox"/><span class="text-sm font-medium">Small Tray (~15 pcs)</span></div><span class="text-sm font-bold text-primary">$115.00</span>
-</label>
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10 cursor-pointer hover:border-primary-container/50">
-<div class="flex items-center gap-3"><input class="rounded text-primary focus:ring-primary" type="checkbox"/><span class="text-sm font-medium">Large Tray (~30 pcs)</span></div><span class="text-sm font-bold text-primary">$224.00</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Georgia Fried Chicken" data-price="9.75" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$9.75</span>
+</div>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Georgia Fried Chicken" data-price="115.00" data-size="Small Tray (~15 pcs)" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Small Tray (~15 pcs)</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$115.00</span>
+</div>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Georgia Fried Chicken" data-price="224.00" data-size="Large Tray (~30 pcs)" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Large Tray (~30 pcs)</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$224.00</span>
+</div>
 </div>
 </div>
 </div>
@@ -240,27 +265,36 @@
                         </h3>
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 <div class="bg-surface-container-low p-6 rounded-xl hover:bg-surface-container transition-colors duration-300 border border-transparent hover:border-primary-container/20">
-<h4 class="font-bold text-lg mb-4">Creole Curried Goat</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Creole Curried Goat</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10 cursor-pointer hover:border-primary-container/50">
-<div class="flex items-center gap-3"><input class="rounded text-primary focus:ring-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$12.00</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Creole Curried Goat" data-price="12.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$12.00</span>
+</div>
 </div>
 </div>
 <div class="bg-surface-container-low p-6 rounded-xl hover:bg-surface-container transition-colors duration-300 border border-transparent hover:border-primary-container/20">
-<h4 class="font-bold text-lg mb-4">Oxtail Supreme</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Oxtail Supreme</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10 cursor-pointer hover:border-primary-container/50">
-<div class="flex items-center gap-3"><input class="rounded text-primary focus:ring-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$17.50</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Oxtail Supreme" data-price="17.50" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$17.50</span>
+</div>
 </div>
 </div>
 <div class="bg-surface-container-low p-6 rounded-xl hover:bg-surface-container transition-colors duration-300 border border-transparent hover:border-primary-container/20">
-<h4 class="font-bold text-lg mb-4">Roast Beef</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Roast Beef</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10 cursor-pointer hover:border-primary-container/50">
-<div class="flex items-center gap-3"><input class="rounded text-primary focus:ring-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$15.00</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Roast Beef" data-price="15.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$15.00</span>
+</div>
 </div>
 </div>
 </div>
@@ -272,19 +306,25 @@
                         </h3>
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 <div class="bg-surface-container-low p-6 rounded-xl hover:bg-surface-container transition-colors duration-300">
-<h4 class="font-bold text-lg mb-4">Crispy Snapper</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Crispy Snapper</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
-<div class="flex items-center gap-3"><input class="rounded text-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$16.00</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Crispy Snapper" data-price="16.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$16.00</span>
+</div>
 </div>
 </div>
 <div class="bg-surface-container-low p-6 rounded-xl hover:bg-surface-container transition-colors duration-300">
-<h4 class="font-bold text-lg mb-4">Salmon (blackened/seasoned)</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Salmon (blackened/seasoned)</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
-<div class="flex items-center gap-3"><input class="rounded text-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$15.00</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Salmon (blackened/seasoned)" data-price="15.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$15.00</span>
+</div>
 </div>
 </div>
 </div>
@@ -296,35 +336,47 @@
                         </h3>
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 <div class="bg-surface-container-low p-6 rounded-xl border border-transparent">
-<h4 class="font-bold text-lg mb-4">Pigeon Peas and Rice</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Pigeon Peas and Rice</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
-<div class="flex items-center gap-3"><input class="rounded text-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$7.00</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Pigeon Peas and Rice" data-price="7.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$7.00</span>
+</div>
 </div>
 </div>
 <div class="bg-surface-container-low p-6 rounded-xl border border-transparent">
-<h4 class="font-bold text-lg mb-4">Creole Vegetable Rice</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Creole Vegetable Rice</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
-<div class="flex items-center gap-3"><input class="rounded text-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$7.00</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Creole Vegetable Rice" data-price="7.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$7.00</span>
+</div>
 </div>
 </div>
 <div class="bg-surface-container-low p-6 rounded-xl border border-transparent">
-<h4 class="font-bold text-lg mb-4">Coconut Lemon Jasmine Rice</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Coconut Lemon Jasmine Rice</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
-<div class="flex items-center gap-3"><input class="rounded text-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$6.80</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Coconut Lemon Jasmine Rice" data-price="6.80" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$6.80</span>
+</div>
 </div>
 </div>
 <div class="bg-surface-container-low p-6 rounded-xl border border-transparent">
-<h4 class="font-bold text-lg mb-4">3 Kings Mac &amp; Cheese</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">3 Kings Mac &amp; Cheese</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
-<div class="flex items-center gap-3"><input class="rounded text-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$7.50</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="3 Kings Mac &amp; Cheese" data-price="7.50" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$7.50</span>
+</div>
 </div>
 </div>
 </div>
@@ -336,35 +388,47 @@
                         </h3>
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 <div class="bg-surface-container-low p-6 rounded-xl border border-transparent">
-<h4 class="font-bold text-lg mb-4">Roasted Sweet Potatoes (Vegan)</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Roasted Sweet Potatoes (Vegan)</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
-<div class="flex items-center gap-3"><input class="rounded text-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$7.50</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Roasted Sweet Potatoes (Vegan)" data-price="7.50" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$7.50</span>
+</div>
 </div>
 </div>
 <div class="bg-surface-container-low p-6 rounded-xl border border-transparent">
-<h4 class="font-bold text-lg mb-4">Roasted Beets (Vegan)</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Roasted Beets (Vegan)</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
-<div class="flex items-center gap-3"><input class="rounded text-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$8.00</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Roasted Beets (Vegan)" data-price="8.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$8.00</span>
+</div>
 </div>
 </div>
 <div class="bg-surface-container-low p-6 rounded-xl border border-transparent">
-<h4 class="font-bold text-lg mb-4">Tropical Garden Salad</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Tropical Garden Salad</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
-<div class="flex items-center gap-3"><input class="rounded text-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$6.00</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Tropical Garden Salad" data-price="6.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$6.00</span>
+</div>
 </div>
 </div>
 <div class="bg-surface-container-low p-6 rounded-xl border border-transparent">
-<h4 class="font-bold text-lg mb-4">Brocolini Carrots &amp; Beans (Vegan)</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Brocolini Carrots &amp; Beans (Vegan)</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
-<div class="flex items-center gap-3"><input class="rounded text-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$6.75</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Brocolini Carrots &amp; Beans (Vegan)" data-price="6.75" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$6.75</span>
+</div>
 </div>
 </div>
 </div>
@@ -376,19 +440,25 @@
                         </h3>
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 <div class="bg-surface-container-low p-6 rounded-xl border border-transparent">
-<h4 class="font-bold text-lg mb-4">Dublin Pigeon Pea Soup (Vegan)</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Dublin Pigeon Pea Soup (Vegan)</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
-<div class="flex items-center gap-3"><input class="rounded text-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$8.55</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Dublin Pigeon Pea Soup (Vegan)" data-price="8.55" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$8.55</span>
+</div>
 </div>
 </div>
 <div class="bg-surface-container-low p-6 rounded-xl border border-transparent">
-<h4 class="font-bold text-lg mb-4">Butternut Squash Soup (Vegan)</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Butternut Squash Soup (Vegan)</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
-<div class="flex items-center gap-3"><input class="rounded text-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$8.00</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Butternut Squash Soup (Vegan)" data-price="8.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$8.00</span>
+</div>
 </div>
 </div>
 </div>
@@ -400,11 +470,14 @@
                         </h3>
 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 <div class="bg-surface-container-low p-6 rounded-xl border border-transparent">
-<h4 class="font-bold text-lg mb-4">Coconut Lemon Loaf</h4>
+<h4 class="font-bold text-lg mb-4 menu-item-name">Coconut Lemon Loaf</h4>
 <div class="space-y-3">
-<label class="flex items-center justify-between p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
-<div class="flex items-center gap-3"><input class="rounded text-primary" type="checkbox"/><span class="text-sm font-medium">Individual</span></div><span class="text-sm font-bold text-primary">$3.25</span>
-</label>
+<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Coconut Lemon Loaf" data-price="3.25" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+<span class="text-sm font-medium flex-grow">Individual</span>
+<input class="w-16 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" min="1" onchange="updateSummary()" type="number" value="1"/>
+<span class="text-sm font-bold text-primary">$3.25</span>
+</div>
 </div>
 </div>
 </div>
@@ -414,41 +487,29 @@
 </div>
 <aside class="w-full lg:w-[25%]">
 <div class="space-y-6">
-<div class="bg-stone-100 dark:bg-stone-900 rounded-2xl p-6 h-fit border border-outline-variant/20 shadow-xl lg:shadow-none">
+<div class="bg-stone-100 dark:bg-stone-900 rounded-2xl p-6 h-fit border border-outline-variant/20 shadow-xl lg:shadow-none sticky top-24">
 <div class="mb-6">
 <h2 class="font-['Noto_Serif'] text-2xl text-[#6f5c2b] font-black">Your Selection</h2>
 <p class="font-['Be_Vietnam_Pro'] text-sm font-medium uppercase tracking-widest text-stone-500 mt-1">Summary &amp; Total</p>
 </div>
-<div class="space-y-4 mb-8 max-h-[400px] overflow-y-auto no-scrollbar">
-<div class="flex justify-between items-start gap-4 animate-in fade-in slide-in-from-right-2">
-<div>
-<p class="text-sm font-bold">Jazzy Jerk Chicken</p>
-<p class="text-xs text-stone-500">Large Tray (~26 pcs)</p>
+<div class="space-y-4 mb-8 max-h-[400px] overflow-y-auto no-scrollbar" id="summary-items">
+<!-- Items will be injected here -->
+<p class="text-stone-400 text-sm italic">No items selected yet.</p>
 </div>
-<span class="text-sm font-bold text-primary">$215.00</span>
-</div>
-<div class="flex justify-between items-start gap-4">
-<div>
-<p class="text-sm font-bold">Pigeon Peas and Rice</p>
-<p class="text-xs text-stone-500">Individual x 10</p>
-</div>
-<span class="text-sm font-bold text-primary">$70.00</span>
-</div>
-<div class="border-t border-stone-200 dark:border-stone-800 pt-4">
+<div class="space-y-4 pt-6 border-t border-stone-300 dark:border-stone-700">
+<div class="border-t border-stone-200 dark:border-stone-800 pt-4" id="pricing-details">
 <div class="flex justify-between items-center text-stone-500 text-sm">
 <span>Subtotal</span>
-<span>$285.00</span>
+<span id="subtotal-display">$0.00</span>
 </div>
 <div class="flex justify-between items-center text-stone-500 text-sm mt-1">
 <span>Service Fee (15%)</span>
-<span>$42.75</span>
+<span id="fee-display">$0.00</span>
 </div>
 </div>
-</div>
-<div class="space-y-4 pt-6 border-t border-stone-300 dark:border-stone-700">
 <div class="flex justify-between items-center">
 <span class="font-bold text-xl text-primary">Total</span>
-<span class="font-black text-2xl text-primary">$327.75</span>
+<span class="font-black text-2xl text-primary" id="total-display">$0.00</span>
 </div>
 <button class="w-full bg-[#006d42] text-white py-4 rounded-lg font-bold text-sm uppercase tracking-[0.1em] hover:shadow-lg hover:-translate-y-0.5 transition-all">
                             Send Catering Request
@@ -474,4 +535,59 @@
 <a class="font-['Be_Vietnam_Pro'] text-xs text-stone-400 hover:text-[#6f5c2b] underline transition-all" href="#">Catering FAQ</a>
 </div>
 </footer>
+<script>
+    function toggleBusinessFields() {
+        const businessRadio = document.querySelector('input[name="event_type"][value="business"]');
+        const businessFields = document.getElementById('business-fields');
+        if (businessRadio.checked) {
+            businessFields.classList.remove('hidden');
+        } else {
+            businessFields.classList.add('hidden');
+        }
+    }
+
+    function updateSummary() {
+        const summaryContainer = document.getElementById('summary-items');
+        const checkboxes = document.querySelectorAll('.menu-checkbox');
+        let subtotal = 0;
+        let html = '';
+
+        checkboxes.forEach(cb => {
+            if (cb.checked) {
+                const qtyInput = cb.parentElement.querySelector('.menu-qty');
+                const qty = parseInt(qtyInput.value) || 1;
+                const price = parseFloat(cb.dataset.price);
+                const itemTotal = price * qty;
+                subtotal += itemTotal;
+
+                html += `
+                <div class="flex justify-between items-start gap-4 animate-in fade-in slide-in-from-right-2">
+                    <div>
+                        <p class="text-sm font-bold">${cb.dataset.name}</p>
+                        <p class="text-xs text-stone-500">${cb.dataset.size} x ${qty}</p>
+                    </div>
+                    <span class="text-sm font-bold text-primary">$${itemTotal.toFixed(2)}</span>
+                </div>
+                `;
+            }
+        });
+
+        if (html === '') {
+            summaryContainer.innerHTML = '<p class="text-stone-400 text-sm italic">No items selected yet.</p>';
+            document.getElementById('subtotal-display').innerText = '$0.00';
+            document.getElementById('fee-display').innerText = '$0.00';
+            document.getElementById('total-display').innerText = '$0.00';
+        } else {
+            summaryContainer.innerHTML = html;
+            const fee = subtotal * 0.15;
+            const total = subtotal + fee;
+            document.getElementById('subtotal-display').innerText = `$${subtotal.toFixed(2)}`;
+            document.getElementById('fee-display').innerText = `$${fee.toFixed(2)}`;
+            document.getElementById('total-display').innerText = `$${total.toFixed(2)}`;
+        }
+    }
+
+    // Initialize summary on load
+    window.onload = updateSummary;
+</script>
 </body></html>
