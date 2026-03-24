@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;0,900;1,400&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+  .material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+  }
+  body {
+    font-family: "Be Vietnam Pro", sans-serif;
+    background-color: #fff8f1;
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1, h2, h3, .serif { font-family: "Noto Serif", serif; }
+
+  /* Bottom sheet */
+  #order-sheet {
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(calc(100% - 72px));
+  }
+  #order-sheet.expanded {
+    transform: translateY(0);
+  }
+  #sheet-backdrop {
+    transition: opacity 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+  }
+  #sheet-backdrop.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* Prevent body scroll when sheet open */
+  body.sheet-open { overflow: hidden; }
+
+  /* Touch-friendly inputs */
+  input[type="number"], input[type="text"], input[type="email"], input[type="tel"] {
+    font-size: 16px; /* prevents iOS zoom */
+  }
+
+  /* No scrollbar */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+
+  /* Category accordion */
+  .category-body {
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  /* Menu item row */
+  .menu-row { touch-action: manipulation; }
+
+  /* Pill badge */
+  #cart-count {
+    transition: transform 0.2s ease;
+  }
+  #cart-count.bump {
+    transform: scale(1.4);
+  }
+
+  .spice-overlay {
+    background-image: linear-gradient(rgba(255,248,241,0.93), rgba(255,248,241,0.93)),
+      url(https://lh3.googleusercontent.com/aida-public/AB6AXuCoT2jaIMUVVs602sy_7FlKZ1ST3Yo6U5cJLfJ896HddlTOcGIxJDSyBsHp1NEDUTFNuxH8SDhDONENZRiCU2BtA-cWpnRTnBqJbvAIkuji3tvZ52lKG9Xo71yFQZXinYlYAO4Ym158_zbb0SmrAyADj4itbReOyvaCE-Y4Of3PMNT4-pLiZcFykkrkakt-a_aNXk9cyNXTTaxd3hwgztyoEjE4bIpdKv7JAXjg6SAPvtjxRlS4wPoY9b-qefkIYlBLFuHAMqSd9l4);
+    background-attachment: fixed;
+    background-size: cover;
+  }
+</style>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "surface-container": "#f4ede5",
+          "primary-fixed-dim": "#dec488",
+          "secondary-container": "#93f7bc",
+          "on-secondary-container": "#007346",
+          "secondary": "#006d42",
+          "outline": "#7d7669",
+          "on-surface": "#1e1b17",
+          "surface-container-high": "#eee7df",
+          "on-background": "#1e1b17",
+          "surface": "#fff8f1",
+          "primary-container": "#bea66d",
+          "surface-container-lowest": "#ffffff",
+          "on-surface-variant": "#4c463a",
+          "surface-variant": "#e8e1d9",
+          "on-primary": "#ffffff",
+          "primary": "#6f5c2b",
+          "surface-tint": "#6f5c2b",
+          "outline-variant": "#cfc5b6",
+          "tertiary": "#a73918",
+          "inverse-primary": "#dec488",
+          "surface-dim": "#e0d9d1",
+          "surface-container-low": "#faf2ea",
+          "on-tertiary-container": "#761c00",
+          "tertiary-container": "#ff8663",
+        },
+        fontFamily: {
+          "headline": ["Noto Serif", "serif"],
+          "body": ["Be Vietnam Pro", "sans-serif"],
+          "label": ["Be Vietnam Pro", "sans-serif"]
+        },
+        borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+      }
+    }
+  }
+</script>
+</head>
+<body class="spice-overlay text-on-surface pb-20">
+
+<!-- ── NAV ── -->
+<nav class="bg-[#fff8f1]/95 backdrop-blur-md border-b border-[#6f5c2b]/10 sticky top-0 z-40 shadow-sm">
+  <div class="flex justify-between items-center px-4 py-3">
+    <div class="font-['Noto_Serif'] text-lg font-black text-[#6f5c2b] leading-tight">Nutmeg Creole<br><span class="text-sm font-normal italic">Kitchen</span></div>
+    <div class="flex items-center gap-3">
+      <a class="text-stone-500 text-sm font-medium" href="#">Menu</a>
+      <a class="text-[#6f5c2b] text-sm font-bold border-b border-[#6f5c2b]" href="#">Catering</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="relative h-56 flex items-end overflow-hidden">
+  <img alt="Gourmet Creole spread" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6vddLy5FvWuqf0AnJZ75FSHgmhw-o49YR--5rmVe-IHG-5h620PFwFc6CgOgng7M8bA40LOTtlgoxN6G974gyjpEfUt8o3s_7zb01rvt2Sy4wcLd3b2cAyNCz6T6Bopgvriqfiq8_sqL_nUyT9g8gl3_Ufl6VSydxnDxApTbpWcGbDsVm_8F4qZMkBs_BlCBNB4Eu31jLIbCxjoVHCqwjINp12l_mc6C1RmIeu2y1QKesPbK0A-w1K9_rOT0mn2H1gxQS_B9a65E"/>
+  <div class="absolute inset-0 bg-gradient-to-t from-[#fff8f1] via-[#fff8f1]/50 to-transparent"></div>
+  <div class="relative z-10 px-4 pb-4">
+    <span class="inline-block px-3 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold tracking-widest uppercase mb-2">Established Heritage</span>
+    <h1 class="text-3xl font-headline text-on-surface leading-tight">The Art of <span class="italic text-primary">Creole</span> Catering</h1>
+    <p class="text-xs text-on-surface-variant mt-1">Elevated Caribbean flavours for your most significant moments.</p>
+  </div>
+</section>
+
+<!-- ── MAIN CONTENT ── -->
+<main class="px-4 py-6 space-y-6 max-w-2xl mx-auto">
+
+  <!-- Contact Information -->
+  <section class="bg-surface-container-lowest rounded-2xl p-5 shadow-sm border border-outline-variant/10">
+    <h2 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+      <span class="material-symbols-outlined text-base">person</span> Contact Information
+    </h2>
+    <div class="space-y-3">
+      <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-outline">First Name</label>
+          <input class="w-full bg-surface-container-high border-none rounded-lg px-3 py-3 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="First name" type="text"/>
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-outline">Last Name</label>
+          <input class="w-full bg-surface-container-high border-none rounded-lg px-3 py-3 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Last name" type="text"/>
+        </div>
+      </div>
+      <div class="space-y-1">
+        <label class="text-[10px] font-bold uppercase tracking-wider text-outline">Email Address</label>
+        <input class="w-full bg-surface-container-high border-none rounded-lg px-3 py-3 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Enter your email" type="email"/>
+      </div>
+      <div class="space-y-1">
+        <label class="text-[10px] font-bold uppercase tracking-wider text-outline">Phone Number</label>
+        <input class="w-full bg-surface-container-high border-none rounded-lg px-3 py-3 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="(555) 000-0000" type="tel"/>
+      </div>
+      <div class="pt-3 border-t border-outline-variant/10 space-y-2">
+        <label class="text-[10px] font-bold uppercase tracking-wider text-outline">Event Type</label>
+        <div class="flex gap-4">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input checked class="w-4 h-4 text-primary focus:ring-primary border-outline-variant" name="event_type" onchange="toggleBusinessFields()" type="radio" value="personal"/>
+            <span class="text-sm font-medium">Personal</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input class="w-4 h-4 text-primary focus:ring-primary border-outline-variant" name="event_type" onchange="toggleBusinessFields()" type="radio" value="business"/>
+            <span class="text-sm font-medium">Business / Corporate</span>
+          </label>
+        </div>
+      </div>
+      <div class="hidden space-y-3" id="business-fields">
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-outline">Business Name</label>
+          <input class="w-full bg-surface-container-high border-none rounded-lg px-3 py-3 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Legal entity name" type="text"/>
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-outline">Business Tax Number</label>
+          <input class="w-full bg-surface-container-high border-none rounded-lg px-3 py-3 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="EIN or VAT Registration" type="text"/>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EVENT DETAILS SECTION -->
+  <section class="bg-surface-container-lowest rounded-2xl p-5 shadow-sm border border-outline-variant/10">
+    <h2 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+      <span class="material-symbols-outlined text-base">event</span> Event Details
+    </h2>
+    <div class="space-y-3">
+
+      <!-- Event Date -->
+      <div class="space-y-1">
+        <label class="text-[10px] font-bold uppercase tracking-wider text-outline">Event Date <span class="text-tertiary">*</span></label>
+        <input id="event_date" class="w-full bg-surface-container-high border-none rounded-lg px-3 py-3 focus:ring-2 focus:ring-primary/20 transition-all" type="date" required/>
+      </div>
+
+      <!-- Event Time -->
+      <div class="space-y-1">
+        <label class="text-[10px] font-bold uppercase tracking-wider text-outline">Time of Event <span class="text-tertiary">*</span></label>
+        <input id="event_time" class="w-full bg-surface-container-high border-none rounded-lg px-3 py-3 focus:ring-2 focus:ring-primary/20 transition-all" type="time" required/>
+      </div>
+
+      <!-- Catering Type -->
+      <div class="space-y-1">
+        <label class="text-[10px] font-bold uppercase tracking-wider text-outline">Catering Type <span class="text-tertiary">*</span></label>
+        <select id="catering_type" onchange="toggleAddressFields()" class="w-full bg-surface-container-high border-none rounded-lg px-3 py-3 focus:ring-2 focus:ring-primary/20 transition-all" required>
+          <option value="" disabled selected>Select catering type...</option>
+          <option value="Pick Up">Pick Up</option>
+          <option value="Delivery">Delivery</option>
+          <option value="Full Service Catering">Full Service Catering</option>
+        </select>
+      </div>
+
+      <!-- Address Fields -->
+      <div class="hidden space-y-3" id="address-fields">
+        <div class="space-y-1">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-outline">Street Address <span class="text-tertiary">*</span></label>
+          <input id="street_address" class="w-full bg-surface-container-high border-none rounded-lg px-3 py-3 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Enter street address" type="text"/>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-outline">City <span class="text-tertiary">*</span></label>
+            <input id="event_city" class="w-full bg-surface-container-high border-none rounded-lg px-3 py-3 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="City" type="text"/>
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-outline">Postal Code <span class="text-tertiary">*</span></label>
+            <input id="event_postal" class="w-full bg-surface-container-high border-none rounded-lg px-3 py-3 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Postal code" type="text"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Allergies -->
+      <div class="space-y-2 pt-2 border-t border-outline-variant/10">
+        <label class="text-[10px] font-bold uppercase tracking-wider text-outline">Any Allergies?</label>
+        <div class="flex gap-4">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input class="w-4 h-4 text-primary focus:ring-primary border-outline-variant" name="has_allergies" onchange="toggleAllergyField()" type="radio" value="no" checked/>
+            <span class="text-sm font-medium">No</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input class="w-4 h-4 text-primary focus:ring-primary border-outline-variant" name="has_allergies" onchange="toggleAllergyField()" type="radio" value="yes"/>
+            <span class="text-sm font-medium">Yes</span>
+          </label>
+        </div>
+        <div class="hidden" id="allergy-field">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-outline">Please list allergies <span class="text-tertiary">*</span></label>
+          <textarea id="allergies" class="mt-1 w-full bg-surface-container-high border-none rounded-lg px-3 py-3 focus:ring-2 focus:ring-primary/20 transition-all resize-none" rows="3" placeholder="e.g. peanuts, shellfish, gluten..."></textarea>
+        </div>
+      </div>
+
+      <!-- Special Instructions -->
+      <div class="space-y-1">
+        <label class="text-[10px] font-bold uppercase tracking-wider text-outline">Special Instructions</label>
+        <textarea id="special_instructions" class="w-full bg-surface-container-high border-none rounded-lg px-3 py-3 focus:ring-2 focus:ring-primary/20 transition-all resize-none" rows="3" placeholder="Any additional requests or notes..."></textarea>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Catering Menu -->
+  <section class="space-y-4">
+    <div class="flex items-end justify-between border-b border-primary-container/30 pb-3">
+      <h2 class="text-2xl font-black text-primary">Catering Menu</h2>
+      <p class="text-[10px] font-bold text-tertiary uppercase tracking-widest">Select qty &amp; size</p>
+    </div>
+
+    <!-- CHICKEN -->
+    <div class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/10 shadow-sm">
+      <button class="category-toggle w-full flex items-center justify-between px-4 py-3 bg-surface-container" onclick="toggleCategory(this)">
+        <span class="font-bold text-secondary flex items-center gap-2 text-sm">
+          <span class="material-symbols-outlined text-base">restaurant</span> Chicken (Halal)
+        </span>
+        <span class="material-symbols-outlined text-outline transition-transform duration-300">expand_more</span>
+      </button>
+      <div class="category-body" style="max-height: 2000px;">
+        <div class="p-4 space-y-4">
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Jazzy Jerk Chicken</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Jazzy Jerk Chicken" data-price="9.75" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$9.75</span>
+            </div>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Jazzy Jerk Chicken" data-price="110.00" data-size="Small Tray (~13 pcs)" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Small Tray (~13 pcs)</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$110.00</span>
+            </div>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Jazzy Jerk Chicken" data-price="215.00" data-size="Large Tray (~26 pcs)" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Large Tray (~26 pcs)</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$215.00</span>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Honey Garlic Chicken</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Honey Garlic Chicken" data-price="9.40" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$9.40</span>
+            </div>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Honey Garlic Chicken" data-price="113.00" data-size="Small Tray (~20 pcs)" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Small Tray (~20 pcs)</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$113.00</span>
+            </div>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Honey Garlic Chicken" data-price="220.50" data-size="Large Tray (~40 pcs)" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Large Tray (~40 pcs)</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$220.50</span>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Georgia Fried Chicken</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Georgia Fried Chicken" data-price="9.75" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$9.75</span>
+            </div>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Georgia Fried Chicken" data-price="115.00" data-size="Small Tray (~15 pcs)" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Small Tray (~15 pcs)</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$115.00</span>
+            </div>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Georgia Fried Chicken" data-price="224.00" data-size="Large Tray (~30 pcs)" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Large Tray (~30 pcs)</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$224.00</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- RED MEAT -->
+    <div class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/10 shadow-sm">
+      <button class="category-toggle w-full flex items-center justify-between px-4 py-3 bg-surface-container" onclick="toggleCategory(this)">
+        <span class="font-bold text-secondary flex items-center gap-2 text-sm">
+          <span class="material-symbols-outlined text-base">outdoor_grill</span> Red Meat
+        </span>
+        <span class="material-symbols-outlined text-outline transition-transform duration-300">expand_more</span>
+      </button>
+      <div class="category-body" style="max-height: 2000px;">
+        <div class="p-4 space-y-4">
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Creole Curried Goat</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Creole Curried Goat" data-price="12.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$12.00</span>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Oxtail Supreme</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Oxtail Supreme" data-price="17.50" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$17.50</span>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Roast Beef</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Roast Beef" data-price="15.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$15.00</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- FISH -->
+    <div class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/10 shadow-sm">
+      <button class="category-toggle w-full flex items-center justify-between px-4 py-3 bg-surface-container" onclick="toggleCategory(this)">
+        <span class="font-bold text-secondary flex items-center gap-2 text-sm">
+          <span class="material-symbols-outlined text-base">set_meal</span> Fish
+        </span>
+        <span class="material-symbols-outlined text-outline transition-transform duration-300">expand_more</span>
+      </button>
+      <div class="category-body" style="max-height: 2000px;">
+        <div class="p-4 space-y-4">
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Crispy Snapper</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Crispy Snapper" data-price="16.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$16.00</span>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Salmon (Blackened / Cajun Seasoned)</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Salmon (Blackened / Cajun Seasoned)" data-price="15.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$15.00</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- STARCHES -->
+    <div class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/10 shadow-sm">
+      <button class="category-toggle w-full flex items-center justify-between px-4 py-3 bg-surface-container" onclick="toggleCategory(this)">
+        <span class="font-bold text-secondary flex items-center gap-2 text-sm">
+          <span class="material-symbols-outlined text-base">lunch_dining</span> Starches
+        </span>
+        <span class="material-symbols-outlined text-outline transition-transform duration-300">expand_more</span>
+      </button>
+      <div class="category-body" style="max-height: 2000px;">
+        <div class="p-4 space-y-4">
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Pigeon Peas and Rice</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Pigeon Peas and Rice" data-price="7.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$7.00</span>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Creole Vegetable Rice</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Creole Vegetable Rice" data-price="7.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$7.00</span>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Coconut Lemon Jasmine Rice</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Coconut Lemon Jasmine Rice" data-price="6.80" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$6.80</span>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">3 Kings Mac &amp; Cheese</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="3 Kings Mac &amp; Cheese" data-price="7.50" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$7.50</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- VEGES & GREENS -->
+    <div class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/10 shadow-sm">
+      <button class="category-toggle w-full flex items-center justify-between px-4 py-3 bg-surface-container" onclick="toggleCategory(this)">
+        <span class="font-bold text-secondary flex items-center gap-2 text-sm">
+          <span class="material-symbols-outlined text-base">potted_plant</span> Veges and Greens
+        </span>
+        <span class="material-symbols-outlined text-outline transition-transform duration-300">expand_more</span>
+      </button>
+      <div class="category-body" style="max-height: 2000px;">
+        <div class="p-4 space-y-4">
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Roasted Sweet Potatoes (Vegan)</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Roasted Sweet Potatoes (Vegan)" data-price="7.50" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$7.50</span>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Roasted Beets (Vegan)</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Roasted Beets (Vegan)" data-price="8.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$8.00</span>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Tropical Garden Salad</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Tropical Garden Salad" data-price="6.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$6.00</span>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Broccolini Carrots &amp; Beans (Vegan)</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Broccolini Carrots &amp; Beans (Vegan)" data-price="6.75" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$6.75</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- SOUPS & STEWS -->
+    <div class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/10 shadow-sm">
+      <button class="category-toggle w-full flex items-center justify-between px-4 py-3 bg-surface-container" onclick="toggleCategory(this)">
+        <span class="font-bold text-secondary flex items-center gap-2 text-sm">
+          <span class="material-symbols-outlined text-base">soup_kitchen</span> Soups and Stews
+        </span>
+        <span class="material-symbols-outlined text-outline transition-transform duration-300">expand_more</span>
+      </button>
+      <div class="category-body" style="max-height: 2000px;">
+        <div class="p-4 space-y-4">
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Dublin Pigeon Pea Soup (Vegan)</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Dublin Pigeon Pea Soup (Vegan)" data-price="8.55" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$8.55</span>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Butternut Squash Soup (Vegan)</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Butternut Squash Soup (Vegan)" data-price="8.00" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$8.00</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- SWEET THINGS -->
+    <div class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-outline-variant/10 shadow-sm">
+      <button class="category-toggle w-full flex items-center justify-between px-4 py-3 bg-surface-container" onclick="toggleCategory(this)">
+        <span class="font-bold text-secondary flex items-center gap-2 text-sm">
+          <span class="material-symbols-outlined text-base">cake</span> Sweet Things
+        </span>
+        <span class="material-symbols-outlined text-outline transition-transform duration-300">expand_more</span>
+      </button>
+      <div class="category-body" style="max-height: 2000px;">
+        <div class="p-4 space-y-4">
+
+          <div class="space-y-1">
+            <h4 class="font-bold text-sm text-on-surface">Coconut Lemon Loaf</h4>
+            <div class="menu-row flex items-center gap-2 p-2.5 bg-surface-container rounded-lg">
+              <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="Coconut Lemon Loaf" data-price="3.25" data-size="Individual" onchange="updateSummary()" type="checkbox"/>
+              <span class="text-xs font-medium flex-grow">Individual</span>
+              <input class="w-12 p-1 text-xs border border-outline-variant/30 rounded bg-surface-container-lowest menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+              <span class="text-xs font-bold text-primary w-14 text-right">$3.25</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer class="pt-6 pb-2 text-center border-t border-stone-200">
+    <p class="text-[10px] text-stone-400">© 2024 Nutmeg Creole Kitchen. All rights reserved.</p>
+    <div class="flex justify-center gap-4 mt-2">
+      <a class="text-[10px] text-stone-400 underline" href="#">Privacy</a>
+      <a class="text-[10px] text-stone-400 underline" href="#">Terms</a>
+      <a class="text-[10px] text-stone-400 underline" href="#">Contact</a>
+      <a class="text-[10px] text-stone-400 underline" href="#">FAQ</a>
+    </div>
+  </footer>
+
+</main>
+
+<!-- ── SHEET BACKDROP ── -->
+<div id="sheet-backdrop" class="fixed inset-0 bg-black/40 z-40" onclick="collapseSheet()"></div>
+
+<!-- ── STICKY ORDER SUMMARY BOTTOM SHEET ── -->
+<div id="order-sheet" class="fixed bottom-0 left-0 right-0 z-50 bg-[#fff8f1] rounded-t-3xl shadow-[0_-8px_40px_rgba(0,0,0,0.15)] border-t border-outline-variant/20 max-h-[85vh] flex flex-col">
+
+  <!-- Handle + collapsed bar (always visible, tappable) -->
+  <button class="w-full pt-3 pb-0 px-4 flex-shrink-0" onclick="toggleSheet()">
+    <div class="w-10 h-1 bg-outline-variant rounded-full mx-auto mb-3"></div>
+    <div class="flex items-center justify-between pb-3 border-b border-stone-200">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-[#006d42] text-lg">shopping_bag</span>
+        <span class="font-['Noto_Serif'] font-black text-[#6f5c2b] text-base">Order Summary</span>
+        <span id="cart-count" class="bg-[#006d42] text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="font-black text-lg text-primary" id="total-display">$0.00</span>
+        <span class="material-symbols-outlined text-outline text-base transition-transform duration-300" id="sheet-chevron">expand_less</span>
+      </div>
+    </div>
+  </button>
+
+  <!-- Expanded content -->
+  <div class="overflow-y-auto no-scrollbar flex-1 px-4 pt-3" id="sheet-expanded-content">
+    <div id="summary-items" class="space-y-3 mb-4">
+      <p class="text-stone-400 text-sm italic text-center py-4">No items selected yet.</p>
+    </div>
+    <div class="border-t border-stone-200 pt-3 space-y-1 mb-4">
+      <div class="flex justify-between text-sm text-stone-500">
+        <span>Subtotal</span><span id="subtotal-display">$0.00</span>
+      </div>
+      <div class="flex justify-between text-sm text-stone-500">
+        <span>Service Fee (15%)</span><span id="fee-display">$0.00</span>
+      </div>
+      <div class="flex justify-between text-base font-black text-primary pt-1">
+        <span>Total</span><span id="total-display-2">$0.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit button — always visible at bottom of sheet -->
+  <div class="px-4 pt-2 pb-6 flex-shrink-0">
+    <button id="submitCateringBtn" onclick="submitCateringRequest()" class="w-full bg-[#006d42] text-white py-4 rounded-xl font-bold text-sm uppercase tracking-[0.1em] active:scale-95 transition-transform shadow-lg">
+      Get Your Catering Quote
+    </button>
+  </div>
+
+</div>
+
+<script>
+  /* ── Sheet toggle ── */
+  let sheetExpanded = false;
+
+  function toggleSheet() {
+    sheetExpanded ? collapseSheet() : expandSheet();
+  }
+
+  function expandSheet() {
+    sheetExpanded = true;
+    document.getElementById('order-sheet').classList.add('expanded');
+    document.getElementById('sheet-backdrop').classList.add('visible');
+    document.getElementById('sheet-chevron').style.transform = 'rotate(180deg)';
+    document.body.classList.add('sheet-open');
+  }
+
+  function collapseSheet() {
+    sheetExpanded = false;
+    document.getElementById('order-sheet').classList.remove('expanded');
+    document.getElementById('sheet-backdrop').classList.remove('visible');
+    document.getElementById('sheet-chevron').style.transform = 'rotate(0deg)';
+    document.body.classList.remove('sheet-open');
+  }
+
+  /* ── Category accordion ── */
+  function toggleCategory(btn) {
+    const body = btn.nextElementSibling;
+    const icon = btn.querySelector('.material-symbols-outlined:last-child');
+    const isOpen = body.style.maxHeight !== '0px' && body.style.maxHeight !== '';
+    if (isOpen) {
+      body.style.maxHeight = '0px';
+      icon.style.transform = 'rotate(-90deg)';
+    } else {
+      body.style.maxHeight = '2000px';
+      icon.style.transform = 'rotate(0deg)';
+    }
+  }
+
+  /* ── Address fields toggle ── */
+  function toggleAddressFields() {
+    const type = document.getElementById('catering_type').value;
+    const addressFields = document.getElementById('address-fields');
+    (type === 'Delivery' || type === 'Full Service Catering')
+      ? addressFields.classList.remove('hidden')
+      : addressFields.classList.add('hidden');
+  }
+
+  /* ── Allergy field toggle ── */
+  function toggleAllergyField() {
+    const yes = document.querySelector("input[name='has_allergies'][value='yes']");
+    const field = document.getElementById('allergy-field');
+    yes.checked ? field.classList.remove('hidden') : field.classList.add('hidden');
+  }
+
+  /* ── Business fields toggle ── */
+  function toggleBusinessFields() {
+    const businessRadio = document.querySelector('input[name="event_type"][value="business"]');
+    const businessFields = document.getElementById('business-fields');
+    businessRadio.checked ? businessFields.classList.remove('hidden') : businessFields.classList.add('hidden');
+  }
+
+  /* ── Order summary update ── */
+  function updateSummary() {
+    const summaryContainer = document.getElementById('summary-items');
+    const checkboxes = document.querySelectorAll('.menu-checkbox');
+    let subtotal = 0;
+    let html = '';
+    let itemCount = 0;
+
+    checkboxes.forEach(cb => {
+      if (cb.checked) {
+        const qtyInput = cb.parentElement.querySelector('.menu-qty');
+        const qty = parseInt(qtyInput.value) || 1;
+        const price = parseFloat(cb.dataset.price);
+        const itemTotal = price * qty;
+        subtotal += itemTotal;
+        itemCount++;
+
+        html += `
+          <div class="flex justify-between items-start gap-3">
+            <div>
+              <p class="text-sm font-bold leading-tight">${cb.dataset.name}</p>
+              <p class="text-xs text-stone-500">${cb.dataset.size} × ${qty}</p>
+            </div>
+            <span class="text-sm font-bold text-primary whitespace-nowrap">$${itemTotal.toFixed(2)}</span>
+          </div>`;
+      }
+    });
+
+    if (html === '') {
+      summaryContainer.innerHTML = '<p class="text-stone-400 text-sm italic text-center py-4">No items selected yet.</p>';
+      ['subtotal-display','fee-display','total-display','total-display-2'].forEach(id => {
+        document.getElementById(id).innerText = '$0.00';
+      });
+      const badge = document.getElementById('cart-count');
+      badge.classList.add('hidden');
+    } else {
+      summaryContainer.innerHTML = html;
+      const fee = subtotal * 0.15;
+      const total = subtotal + fee;
+      document.getElementById('subtotal-display').innerText = `$${subtotal.toFixed(2)}`;
+      document.getElementById('fee-display').innerText = `$${fee.toFixed(2)}`;
+      document.getElementById('total-display').innerText = `$${total.toFixed(2)}`;
+      document.getElementById('total-display-2').innerText = `$${total.toFixed(2)}`;
+
+      // Badge
+      const badge = document.getElementById('cart-count');
+      badge.textContent = itemCount;
+      badge.classList.remove('hidden');
+      badge.classList.add('bump');
+      setTimeout(() => badge.classList.remove('bump'), 200);
+    }
+  }
+
+  window.onload = updateSummary;
+
+  /* ── Webhook submit ── */
+  async function submitCateringRequest() {
+    const WEBHOOK_URL = "https://casava-ai.app.n8n.cloud/webhook/catering-request";
+
+    const btn = document.getElementById("submitCateringBtn");
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+
+    const payload = {
+      first_name:           document.querySelector("input[placeholder='First name']")?.value || "",
+      last_name:            document.querySelector("input[placeholder='Last name']")?.value || "",
+      email:                document.querySelector("input[type='email']")?.value || "",
+      phone:                document.querySelector("input[type='tel']")?.value || "",
+      event_type:           document.querySelector("input[name='event_type']:checked")?.value || "",
+      business_name:        document.querySelector("input[placeholder='Legal entity name']")?.value || "",
+      tax_number:           document.querySelector("input[placeholder='EIN or VAT Registration']")?.value || "",
+      event_date:           document.getElementById("event_date")?.value || "",
+      event_time:           document.getElementById("event_time")?.value || "",
+      catering_type:        document.getElementById("catering_type")?.value || "",
+      street_address:       document.getElementById("street_address")?.value || "",
+      city:                 document.getElementById("event_city")?.value || "",
+      postal_code:          document.getElementById("event_postal")?.value || "",
+      has_allergies:        document.querySelector("input[name='has_allergies']:checked")?.value || "",
+      allergies:            document.getElementById("allergies")?.value || "",
+      special_instructions: document.getElementById("special_instructions")?.value || "",
+      order_total:          document.getElementById("total-display")?.textContent?.trim() || "",
+      timestamp:            new Date().toISOString(),
+    };
+
+    try {
+      const response = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        btn.textContent = "✓ Request Submitted!";
+        btn.classList.replace("bg-[#006d42]", "bg-green-700");
+      } else {
+        throw new Error("Server responded with " + response.status);
+      }
+    } catch (err) {
+      console.error("Webhook error:", err);
+      btn.textContent = "Failed — Try Again";
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>
