@@ -291,7 +291,7 @@ Get Your Catering Quote
 </main>
 
 <footer class="w-full py-8 px-6 mt-20 flex flex-col md:flex-row justify-between items-center gap-4 bg-[#fff8f1] dark:bg-stone-950 border-t border-stone-200 dark:border-stone-800">
-<div class="font-['Be_Vietnam_Pro'] text-xs text-stone-500">© 2024 <span id="business-name-footer">Nutmeg Creole Kitchen</span>. All rights reserved.</div>
+<div class="font-['Be_Vietnam_Pro'] text-xs text-stone-500">&copy; 2024 <span id="business-name-footer">Nutmeg Creole Kitchen</span>. All rights reserved.</div>
 <div class="flex gap-8">
 <a class="font-['Be_Vietnam_Pro'] text-xs text-stone-400 hover:text-[#6f5c2b] underline transition-all" href="#">Privacy Policy</a>
 <a class="font-['Be_Vietnam_Pro'] text-xs text-stone-400 hover:text-[#6f5c2b] underline transition-all" href="#">Terms of Service</a>
@@ -301,70 +301,41 @@ Get Your Catering Quote
 </footer>
 
 <script>
-/* ── Read URL parameters ── */
 const urlParams = new URLSearchParams(window.location.search);
 const BUSINESS_ID = urlParams.get('businessID') || 'nutmeg_creole';
 const MENU_WEBHOOK = 'https://casava-ai.app.n8n.cloud/webhook/get-menu';
 
-/* ── Dynamic config values from API ── */
-let CONFIG = {
-  taxRate: 0.13,
-  deliveryFee: 0.00,
-  businessName: ''
-};
+let CONFIG = { taxRate: 0.13, deliveryFee: 0.00, businessName: '' };
 
-/* ── Pre-fill contact fields from URL parameters ── */
 function prefillFromURL() {
-  const fields = {
-    'first_name': 'first_name',
-    'last_name':  'last_name',
-    'email':      'email_address',
-    'phone':      'phone_number'
-  };
+  const fields = { 'first_name': 'first_name', 'last_name': 'last_name', 'email': 'email_address', 'phone': 'phone_number' };
   for (const [param, id] of Object.entries(fields)) {
     const val = urlParams.get(param);
-    if (val) {
-      const el = document.getElementById(id);
-      if (el) el.value = decodeURIComponent(val);
-    }
+    if (val) { const el = document.getElementById(id); if (el) el.value = decodeURIComponent(val); }
   }
 }
 
-/* ── Load menu from workflow 8 ── */
 async function loadMenu() {
   try {
     const response = await fetch(`${MENU_WEBHOOK}?businessID=${BUSINESS_ID}`);
     const data = await response.json();
-
-    // Store dynamic config values
-    if (data.taxRate !== undefined)    CONFIG.taxRate     = parseFloat(data.taxRate) || 0.13;
+    if (data.taxRate !== undefined) CONFIG.taxRate = parseFloat(data.taxRate) || 0.13;
     if (data.deliveryFee !== undefined) CONFIG.deliveryFee = parseFloat(data.deliveryFee) || 0.00;
-    if (data.businessName)             CONFIG.businessName = data.businessName;
-
-    // Update tax label with actual rate
+    if (data.businessName) CONFIG.businessName = data.businessName;
     const taxPct = Math.round(CONFIG.taxRate * 100);
     const taxLabel = document.getElementById('tax-label');
     if (taxLabel) taxLabel.textContent = `Tax (${taxPct}%)`;
-
-    // Update delivery fee display default
     const deliveryDisplay = document.getElementById('delivery-fee-display');
     if (deliveryDisplay) deliveryDisplay.textContent = `$${CONFIG.deliveryFee.toFixed(2)}`;
-
-    // Update business name in nav and footer
     if (CONFIG.businessName) {
       const navName = document.getElementById('business-name-nav');
       const footerName = document.getElementById('business-name-footer');
-      if (navName)    navName.textContent    = CONFIG.businessName;
+      if (navName) navName.textContent = CONFIG.businessName;
       if (footerName) footerName.textContent = CONFIG.businessName;
     }
-
     renderMenu(data.menu);
   } catch (err) {
-    document.getElementById('catering-menu').innerHTML = `
-      <div class="text-center py-12 text-tertiary">
-        <span class="material-symbols-outlined text-4xl">error</span>
-        <p class="mt-2 text-sm font-medium">Failed to load menu. Please refresh the page.</p>
-      </div>`;
+    document.getElementById('catering-menu').innerHTML = '<div class="text-center py-12 text-tertiary"><span class="material-symbols-outlined text-4xl">error</span><p class="mt-2 text-sm font-medium">Failed to load menu. Please refresh the page.</p></div>';
     console.error('Menu load error:', err);
   }
 }
@@ -377,34 +348,19 @@ function renderMenu(menu) {
     cat.items.forEach(item => {
       let sizesHtml = '';
       item.sizes.forEach(s => {
-        sizesHtml += `
-          <div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
-            <input class="rounded text-primary focus:ring-primary menu-checkbox"
-              data-name="${item.itemName}"
-              data-price="${s.price}"
-              data-size="${s.size}"
-              onchange="updateSummary()" type="checkbox"/>
+        sizesHtml += `<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+            <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="${item.itemName}" data-price="${s.price}" data-size="${s.size}" onchange="updateSummary()" type="checkbox"/>
             <span class="text-sm font-medium flex-grow">${s.size}</span>
-            <input class="w-12 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty"
-              maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+            <input class="w-12 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
             <span class="text-sm font-bold text-primary">$${parseFloat(s.price).toFixed(2)}</span>
           </div>`;
       });
-      itemsHtml += `
-        <div class="bg-surface-container-low p-6 rounded-xl hover:bg-surface-container transition-colors duration-300 border border-transparent hover:border-primary-container/20">
+      itemsHtml += `<div class="bg-surface-container-low p-6 rounded-xl hover:bg-surface-container transition-colors duration-300 border border-transparent hover:border-primary-container/20">
           <h4 class="font-bold text-lg mb-4 menu-item-name">${item.itemName}</h4>
           <div class="space-y-3">${sizesHtml}</div>
         </div>`;
     });
-    html += `
-      <div class="space-y-6">
-        <h3 class="text-xl font-bold text-secondary flex items-center gap-2">
-          <span class="material-symbols-outlined">${cat.categoryIcon}</span> ${cat.category}
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          ${itemsHtml}
-        </div>
-      </div>`;
+    html += `<div class="space-y-6"><h3 class="text-xl font-bold text-secondary flex items-center gap-2"><span class="material-symbols-outlined">${cat.categoryIcon}</span> ${cat.category}</h3><div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">${itemsHtml}</div></div>`;
   });
   container.innerHTML = html;
   updateSummary();
@@ -413,11 +369,7 @@ function renderMenu(menu) {
 function toggleAddressFields() {
   const type = document.getElementById('catering_type').value;
   const addressFields = document.getElementById('address-fields');
-  if (type === 'Delivery' || type === 'Full Service Catering') {
-    addressFields.classList.remove('hidden');
-  } else {
-    addressFields.classList.add('hidden');
-  }
+  (type === 'Delivery' || type === 'Full Service Catering') ? addressFields.classList.remove('hidden') : addressFields.classList.add('hidden');
   updateSummary();
 }
 
@@ -430,19 +382,13 @@ function toggleAllergyField() {
 function toggleBusinessFields() {
   const businessRadio = document.querySelector('input[name="event_type"][value="business"]');
   const businessFields = document.getElementById('business-fields');
-  if (businessRadio.checked) {
-    businessFields.classList.remove('hidden');
-  } else {
-    businessFields.classList.add('hidden');
-  }
+  businessRadio.checked ? businessFields.classList.remove('hidden') : businessFields.classList.add('hidden');
 }
 
 function updateSummary() {
   const summaryContainer = document.getElementById('summary-items');
   const checkboxes = document.querySelectorAll('.menu-checkbox');
-  let subtotal = 0;
-  let html = '';
-
+  let subtotal = 0, html = '';
   checkboxes.forEach(cb => {
     if (cb.checked) {
       const qtyInput = cb.parentElement.querySelector('.menu-qty');
@@ -450,28 +396,16 @@ function updateSummary() {
       const price = parseFloat(cb.dataset.price);
       const itemTotal = price * qty;
       subtotal += itemTotal;
-      html += `
-        <div class="flex justify-between items-start gap-4 animate-in fade-in slide-in-from-right-2">
-          <div>
-            <p class="text-sm font-bold">${cb.dataset.name}</p>
-            <p class="text-xs text-stone-500">${cb.dataset.size} x ${qty}</p>
-          </div>
-          <span class="text-sm font-bold text-primary">$${itemTotal.toFixed(2)}</span>
-        </div>`;
+      html += `<div class="flex justify-between items-start gap-4"><div><p class="text-sm font-bold">${cb.dataset.name}</p><p class="text-xs text-stone-500">${cb.dataset.size} x ${qty}</p></div><span class="text-sm font-bold text-primary">$${itemTotal.toFixed(2)}</span></div>`;
     }
   });
-
   const cateringType = document.getElementById('catering_type')?.value || '';
-  const deliveryFee = (cateringType === 'Delivery' || cateringType === 'Full Service Catering')
-    ? CONFIG.deliveryFee : 0;
-
+  const deliveryFee = (cateringType === 'Delivery' || cateringType === 'Full Service Catering') ? CONFIG.deliveryFee : 0;
   const deliveryRow = document.getElementById('delivery-fee-row');
   if (deliveryRow) {
     deliveryRow.classList.toggle('hidden', deliveryFee === 0);
-    const deliveryDisplay = document.getElementById('delivery-fee-display');
-    if (deliveryDisplay) deliveryDisplay.textContent = `$${deliveryFee.toFixed(2)}`;
+    document.getElementById('delivery-fee-display').textContent = `$${deliveryFee.toFixed(2)}`;
   }
-
   if (html === '') {
     summaryContainer.innerHTML = '<p class="text-stone-400 text-sm italic">No items selected yet.</p>';
     document.getElementById('subtotal-display').innerText = '$0.00';
@@ -487,20 +421,15 @@ function updateSummary() {
   }
 }
 
-window.onload = function() {
-  prefillFromURL();
-  updateSummary();
-  loadMenu();
-};
+window.onload = function() { prefillFromURL(); updateSummary(); loadMenu(); };
 </script>
 
 <script>
 async function submitCateringRequest() {
-  const WEBHOOK_URL = `https://casava-ai.app.n8n.cloud/webhook/catering-request/${BUSINESS_ID}`;
+  const WEBHOOK_URL = `https://casava-ai.app.n8n.cloud/webhook/7ddf0485-c10a-4264-99b7-c6f0337389e2/catering-request/${BUSINESS_ID}`;
   const btn = document.getElementById("submitCateringBtn");
   btn.disabled = true;
   btn.textContent = "Sending...";
-
   const payload = {
     firstName:           document.getElementById("first_name")?.value || "",
     lastName:            document.getElementById("last_name")?.value || "",
@@ -521,24 +450,28 @@ async function submitCateringRequest() {
     specialInstructions: document.getElementById("special_instructions")?.value || "",
     orderTotal:          document.getElementById("total-display")?.textContent?.trim() || "",
     timestamp:           new Date().toISOString(),
+    menu_items:          Array.from(document.querySelectorAll(".menu-checkbox")).filter(cb => cb.checked).map(cb => ({
+      name:     cb.dataset.name,
+      size:     cb.dataset.size,
+      price:    parseFloat(cb.dataset.price),
+      quantity: parseInt(cb.parentElement.querySelector(".menu-qty")?.value) || 1
+    })),
   };
-
   try {
     const response = await fetch(WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-
     if (response.ok) {
-      btn.textContent = "✓ Request Submitted!";
+      btn.textContent = "\u2713 Request Submitted!";
       btn.classList.replace("bg-[#006d42]", "bg-green-700");
     } else {
       throw new Error("Server responded with " + response.status);
     }
   } catch (err) {
     console.error("Webhook error:", err);
-    btn.textContent = "Failed — Try Again";
+    btn.textContent = "Failed \u2014 Try Again";
     btn.disabled = false;
   }
 }
