@@ -448,7 +448,7 @@ window.onload = function() { prefillFromURL(); updateSummary(); loadMenu(); };
 
 <script>
 async function submitCateringRequest() {
-  const WEBHOOK_URL = `https://casava-ai.app.n8n.cloud/webhook/catering-request/${BUSINESS_ID}`;
+  const WEBHOOK_URL = `https://casava-ai.app.n8n.cloud/webhook/7ddf0485-c10a-4264-99b7-c6f0337389e2/catering-request/${BUSINESS_ID}`;
   const btn = document.getElementById("submitCateringBtn");
   btn.disabled = true;
   btn.textContent = "Sending...";
@@ -473,6 +473,12 @@ async function submitCateringRequest() {
     specialInstructions: document.getElementById("special_instructions")?.value || "",
     orderTotal:          document.getElementById("total-display")?.textContent?.trim() || "",
     timestamp:           new Date().toISOString(),
+    menu_items:          Array.from(document.querySelectorAll(".menu-checkbox")).filter(cb => cb.checked).map(cb => ({
+      name:     cb.dataset.name,
+      size:     cb.dataset.size,
+      price:    parseFloat(cb.dataset.price),
+      quantity: parseInt(cb.parentElement.querySelector(".menu-qty")?.value) || 1
+    })),
   };
 
   try {
