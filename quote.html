@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;0,900;1,400&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+.material-symbols-outlined { font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24 }
+body { font-family: "Be Vietnam Pro", sans-serif; background-color: #fff8f1 }
+h1, h2, h3, .serif { font-family: "Noto Serif", serif }
+.spice-overlay {
+  background-image: linear-gradient(rgba(255,248,241,0.92), rgba(255,248,241,0.92)),
+    url(https://lh3.googleusercontent.com/aida-public/AB6AXuCoT2jaIMUVVs602sy_7FlKZ1ST3Yo6U5cJLfJ896HddlTOcGIxJDSyBsHp1NEDUTFNuxH8SDhDONENZRiCU2BtA-cWpnRTnBqJbvAIkuji3tvZ52lKG9Xo71yFQZXinYlYAO4Ym158_zbb0SmrAyADj4itbReOyvaCE-Y4Of3PMNT4-pLiZcFykkrkakt-a_aNXk9cyNXTTaxd3hwgztyoEjE4bIpdKv7JAXjg6SAPvtjxRlS4wPoY9b-qefkIYlBLFuHAMqSd9l4);
+  background-attachment: fixed;
+  background-size: cover
+}
+.no-scrollbar::-webkit-scrollbar { display: none }
+</style>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "surface-container": "#f4ede5",
+        "on-secondary-fixed-variant": "#005231",
+        "secondary-container": "#93f7bc",
+        "on-error": "#ffffff",
+        "on-secondary": "#ffffff",
+        "on-surface-variant": "#4c463a",
+        "background": "#fff8f1",
+        "secondary": "#006d42",
+        "outline": "#7d7669",
+        "on-surface": "#1e1b17",
+        "inverse-surface": "#33302b",
+        "surface-container-high": "#eee7df",
+        "on-background": "#1e1b17",
+        "surface": "#fff8f1",
+        "primary-container": "#bea66d",
+        "surface-container-lowest": "#ffffff",
+        "error": "#ba1a1a",
+        "surface-variant": "#e8e1d9",
+        "surface-bright": "#fff8f1",
+        "on-primary": "#ffffff",
+        "primary": "#6f5c2b",
+        "surface-tint": "#6f5c2b",
+        "surface-container-highest": "#e8e1d9",
+        "outline-variant": "#cfc5b6",
+        "tertiary": "#a73918",
+        "inverse-primary": "#dec488",
+        "error-container": "#ffdad6",
+        "surface-dim": "#e0d9d1",
+        "surface-container-low": "#faf2ea",
+        "orange": "#F5641B",
+      },
+      fontFamily: {
+        "headline": ["Noto Serif", "serif"],
+        "body": ["Be Vietnam Pro", "sans-serif"],
+        "label": ["Be Vietnam Pro", "sans-serif"]
+      },
+      borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+    },
+  },
+}
+</script>
+</head>
+<body class="spice-overlay text-on-surface">
+
+<!-- ── NAV ───────────────────────────────────────────── -->
+<nav class="bg-white border-b border-[#6f5c2b]/10 shadow-[0_4px_12px_rgba(111,92,43,0.08)] sticky top-0 z-50">
+  <div class="flex justify-between items-center w-full px-6 py-2.5 max-w-screen-lg mx-auto">
+    <div class="flex items-center gap-3">
+      <!-- Business logo (shown when businessLogoURL is set) -->
+      <img id="nav-logo" src="" alt="" class="h-9 w-auto rounded hidden"/>
+      <!-- Casava default logo (hidden when business logo is present) -->
+      <img id="nav-casava-logo" src="https://casava.ai/casava-logo.png" alt="casava.ai"
+        class="h-8 w-auto"
+        onerror="this.style.display='none'; document.getElementById('nav-business-name').classList.remove('hidden')"/>
+      <div class="font-['Noto_Serif'] text-xl font-black text-[#6f5c2b] hidden" id="nav-business-name">Casava</div>
+    </div>
+    <div id="nav-badge" class="hidden px-3 py-1 rounded-full bg-[#F5641B]/10 text-[#F5641B] text-xs font-bold tracking-widest uppercase">
+      Catering Quote
+    </div>
+  </div>
+</nav>
+
+<!-- ── LOADING ────────────────────────────────────────── -->
+<div id="state-loading" class="min-h-[70vh] flex flex-col items-center justify-center gap-4">
+  <span class="material-symbols-outlined text-5xl text-[#6f5c2b] animate-spin" style="animation:spin 1s linear infinite">progress_activity</span>
+  <p class="text-sm font-medium text-on-surface-variant">Loading your quote…</p>
+</div>
+
+<!-- ── ERROR ──────────────────────────────────────────── -->
+<div id="state-error" class="hidden min-h-[70vh] flex flex-col items-center justify-center gap-4 px-6 text-center">
+  <span class="material-symbols-outlined text-5xl text-tertiary">error</span>
+  <h2 class="font-['Noto_Serif'] text-2xl text-primary">Quote not found</h2>
+  <p id="error-msg" class="text-sm text-on-surface-variant max-w-sm">This link may have expired or the quote ID is incorrect.</p>
+</div>
+
+<!-- ── CONFIRMED ──────────────────────────────────────── -->
+<div id="state-confirmed" class="hidden min-h-[70vh] flex flex-col items-center justify-center gap-6 px-6 text-center">
+  <div class="w-20 h-20 rounded-full bg-[#006d42]/10 flex items-center justify-center">
+    <span class="material-symbols-outlined text-4xl text-[#006d42]">check_circle</span>
+  </div>
+  <h2 class="font-['Noto_Serif'] text-3xl text-primary">Quote Accepted!</h2>
+  <p class="text-on-surface-variant max-w-sm text-sm leading-relaxed">You're all confirmed. The team has been notified and will be in touch shortly with next steps.</p>
+</div>
+
+<!-- ── QUOTE CONTENT ──────────────────────────────────── -->
+<div id="quote-content" class="hidden max-w-screen-lg mx-auto px-6 py-10 space-y-8">
+
+  <!-- Quote header -->
+  <div class="space-y-3">
+    <span class="inline-block px-3 py-1 rounded-full bg-[#006d42]/10 text-[#006d42] text-xs font-bold tracking-widest uppercase" id="quote-status-badge">Approved &amp; Ready</span>
+    <h1 class="font-['Noto_Serif'] text-4xl md:text-5xl text-primary leading-tight" id="quote-headline">Your Catering Quote</h1>
+    <div class="flex flex-wrap gap-4 text-xs text-on-surface-variant font-medium">
+      <span id="meta-quote-id"></span>
+      <span id="meta-date"></span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <!-- ── LEFT COLUMN ──────────────────────────────── -->
+    <div class="lg:col-span-2 space-y-6">
+
+      <!-- Event Details -->
+      <section class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-outline-variant/10">
+        <h2 class="text-lg font-bold text-primary mb-5 flex items-center gap-2">
+          <span class="material-symbols-outlined text-base">event</span>
+          Event Details
+        </h2>
+        <div class="grid grid-cols-2 gap-x-8 gap-y-4" id="event-grid"></div>
+      </section>
+
+      <!-- Menu Items -->
+      <section class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-outline-variant/10">
+        <h2 class="text-lg font-bold text-primary mb-5 flex items-center gap-2">
+          <span class="material-symbols-outlined text-base">restaurant_menu</span>
+          Menu Selection
+        </h2>
+        <div id="menu-items" class="divide-y divide-outline-variant/20"></div>
+      </section>
+
+      <!-- Custom Line Items -->
+      <section id="custom-items-section" class="hidden bg-surface-container-lowest p-6 rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-outline-variant/10">
+        <h2 class="text-lg font-bold text-primary mb-5 flex items-center gap-2">
+          <span class="material-symbols-outlined text-base">add_circle</span>
+          Additional Items
+        </h2>
+        <div id="custom-items" class="divide-y divide-outline-variant/20"></div>
+      </section>
+
+      <!-- Notes -->
+      <section id="notes-section" class="hidden bg-surface-container-lowest p-6 rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-outline-variant/10">
+        <h2 class="text-lg font-bold text-primary mb-3 flex items-center gap-2">
+          <span class="material-symbols-outlined text-base">description</span>
+          Notes
+        </h2>
+        <p id="notes-text" class="text-sm text-on-surface-variant leading-relaxed italic"></p>
+      </section>
+
+      <!-- Owner-only actions -->
+      <section id="owner-actions" class="hidden bg-surface-container-lowest p-6 rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-outline-variant/10 space-y-4">
+        <h2 class="text-lg font-bold text-primary flex items-center gap-2">
+          <span class="material-symbols-outlined text-base">manage_accounts</span>
+          Owner Actions
+        </h2>
+        <div class="flex flex-wrap gap-3">
+          <button onclick="ownerApprove()" class="px-5 py-2.5 bg-[#006d42] text-white text-sm font-bold rounded-lg hover:bg-[#005231] transition-all">
+            Approve Quote
+          </button>
+          <a id="btn-edit-quote" href="#" class="px-5 py-2.5 bg-surface-container-high text-on-surface text-sm font-bold rounded-lg hover:bg-outline-variant/30 transition-all">
+            Edit Quote
+          </a>
+        </div>
+        <p class="text-xs text-on-surface-variant">Approving will send the customer their quote link.</p>
+      </section>
+
+    </div>
+
+    <!-- ── RIGHT COLUMN — Summary + CTA ─────────────── -->
+    <div class="lg:col-span-1">
+      <div class="bg-stone-100 rounded-2xl p-6 border border-outline-variant/20 shadow-xl sticky top-24 space-y-6">
+
+        <div>
+          <h2 class="font-['Noto_Serif'] text-2xl text-[#6f5c2b] font-black">Summary</h2>
+          <p class="text-xs font-bold uppercase tracking-widest text-stone-500 mt-1">Pricing Breakdown</p>
+        </div>
+
+        <div class="space-y-2 text-sm text-on-surface-variant" id="summary-rows">
+          <!-- populated by JS -->
+        </div>
+
+        <div class="pt-4 border-t border-stone-300 flex justify-between items-baseline">
+          <span class="font-bold text-lg text-primary">Total</span>
+          <span class="font-black text-2xl text-primary" id="summary-total">$0.00</span>
+        </div>
+
+        <!-- Customer CTA -->
+        <div id="customer-cta" class="hidden space-y-3">
+          <button onclick="customerAccept()" id="btn-accept"
+            class="w-full bg-[#F5641B] text-white py-4 rounded-lg font-bold text-sm uppercase tracking-[0.1em] hover:bg-orange-600 hover:shadow-lg hover:-translate-y-0.5 transition-all">
+            Accept This Quote
+          </button>
+          <p class="text-xs text-on-surface-variant text-center leading-relaxed">
+            By accepting, you agree to the event details and pricing above. A deposit invoice will follow by email.
+          </p>
+        </div>
+
+        <!-- Owner summary note -->
+        <div id="owner-summary-note" class="hidden">
+          <p class="text-xs text-on-surface-variant bg-surface-container rounded-lg p-3 leading-relaxed">
+            <span class="font-bold text-primary">Owner view.</span> Customer has not accepted yet. Use the actions panel to approve or edit.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ─────────────────────────────────────────── -->
+<footer class="w-full py-8 px-6 mt-20 flex flex-col md:flex-row justify-between items-center gap-4 bg-[#fff8f1] border-t border-stone-200">
+  <div class="text-xs text-stone-500">&copy; <span id="footer-year"></span> <span id="footer-business-name">Casava</span>. All rights reserved.</div>
+  <div class="text-xs text-stone-400">Powered by <span class="font-bold text-[#6f5c2b]">Casava</span></div>
+</footer>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────
+const QUOTE_DATA_WEBHOOK  = 'https://casava-ai.app.n8n.cloud/webhook/quote-data';
+const ACCEPT_WEBHOOK      = 'https://casava-ai.app.n8n.cloud/webhook/accept-quote';
+const APPROVE_WEBHOOK     = 'https://casava-ai.app.n8n.cloud/webhook/approve-quote';
+
+const params     = new URLSearchParams(window.location.search);
+const BUSINESS_ID = params.get('businessID') || '';
+const QUOTE_ID    = params.get('quoteID') || '';
+const TOKEN       = params.get('token') || '';
+const VIEW        = params.get('view') || 'customer'; // 'owner' | 'customer'
+
+// ── HELPERS ───────────────────────────────────────────
+const $  = id => document.getElementById(id);
+const fmt = n  => '$' + parseFloat(n || 0).toFixed(2);
+
+function show(id) { $(id).classList.remove('hidden'); }
+function hide(id) { $(id).classList.add('hidden'); }
+
+function applyBrandColor(color) {
+  if (!color || !/^#[0-9a-fA-F]{3,8}$/.test(color)) return;
+  document.querySelectorAll('.brand-primary').forEach(el => el.style.color = color);
+  document.querySelectorAll('.brand-bg').forEach(el => el.style.backgroundColor = color);
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  try {
+    return new Date(d).toLocaleDateString('en-CA', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+  } catch(e) { return d; }
+}
+
+function infoCell(label, value) {
+  if (!value) return '';
+  return `<div>
+    <p class="text-xs font-bold uppercase tracking-wider text-outline mb-1">${label}</p>
+    <p class="text-sm font-medium text-on-surface">${value}</p>
+  </div>`;
+}
+
+function lineItemRow(name, qty, lineTotal, sub) {
+  return `<div class="flex justify-between items-start gap-4 py-3">
+    <div>
+      <p class="text-sm font-semibold text-on-surface">${name}</p>
+      ${sub ? `<p class="text-xs text-on-surface-variant mt-0.5">${sub}</p>` : ''}
+    </div>
+    <div class="text-right shrink-0">
+      <p class="text-xs text-on-surface-variant">× ${qty}</p>
+      <p class="text-sm font-bold text-primary">${fmt(lineTotal)}</p>
+    </div>
+  </div>`;
+}
+
+// ── RENDER ────────────────────────────────────────────
+function renderQuote(q) {
+  // Branding
+  if (q.businessLogoURL) {
+    const logo = $('nav-logo');
+    logo.src = q.businessLogoURL;
+    logo.alt = q.businessName || '';
+    logo.classList.remove('hidden');
+  }
+  if (q.businessName) {
+    $('nav-business-name').textContent = q.businessName;
+    $('footer-business-name').textContent = q.businessName;
+  }
+  if (q.brandColor) applyBrandColor(q.brandColor);
+
+  $('footer-year').textContent = new Date().getFullYear();
+  show('nav-badge');
+
+  // Header
+  $('quote-headline').textContent = (VIEW === 'customer' && q.customerName)
+    ? `Hello, ${q.customerName.split(' ')[0]} — here's your quote`
+    : `Quote ${q.quoteID || ''}`;
+
+  $('meta-quote-id').textContent = q.quoteID || '';
+  $('meta-date').textContent = q.createdAt
+    ? 'Prepared ' + new Date(q.createdAt).toLocaleDateString('en-CA', { month:'short', day:'numeric', year:'numeric' })
+    : '';
+
+  // Status badge colour
+  const badge = $('quote-status-badge');
+  if (q.status === 'customer_accepted') {
+    badge.textContent = 'Accepted';
+    badge.className = badge.className.replace('bg-[#006d42]/10 text-[#006d42]', 'bg-[#F5641B]/10 text-[#F5641B]');
+  }
+
+  // Event grid
+  $('event-grid').innerHTML =
+    infoCell('Customer', q.customerName) +
+    infoCell('Email', q.customerEmail) +
+    infoCell('Phone', q.customerPhone) +
+    (q.businessCustomerName ? infoCell('Organisation', q.businessCustomerName) : '') +
+    infoCell('Event Date', formatDate(q.eventDate)) +
+    infoCell('Event Time', q.eventTime) +
+    infoCell('Guests', q.numberOfGuests ? q.numberOfGuests + ' people' : '') +
+    infoCell('Service Type', q.cateringType) +
+    (q.location ? `<div class="col-span-2">${infoCell('Location', q.location)}</div>` : '') +
+    (q.allergies && q.allergies !== 'None' ? `<div class="col-span-2">${infoCell('Allergies / Restrictions', q.allergies)}</div>` : '');
+
+  // Menu items
+  const menuItems = q.menuItems || [];
+  let menuHTML = '';
+  let lastCat = null;
+
+  if (Array.isArray(menuItems) && menuItems.length) {
+    menuItems.forEach(item => {
+      const cat = item.category || '';
+      if (cat && cat !== lastCat) {
+        menuHTML += `<div class="py-2 text-xs font-bold uppercase tracking-widest text-[#006d42] border-b border-[#006d42]/20 mt-3 mb-1">${cat}</div>`;
+        lastCat = cat;
+      }
+      const lineTotal = parseFloat(item.lineTotal || item.line_total || 0)
+        || (parseFloat(item.price || 0) * parseInt(item.quantity || 1));
+      menuHTML += lineItemRow(
+        item.name || item.itemName || '',
+        item.quantity || 1,
+        lineTotal,
+        item.size || ''
+      );
+    });
+  } else if (q.menuItemsFormatted) {
+    // Fallback: plain text from sheet
+    menuHTML = `<p class="text-sm text-on-surface-variant py-3 whitespace-pre-line">${q.menuItemsFormatted}</p>`;
+  } else {
+    menuHTML = '<p class="text-sm text-on-surface-variant italic py-3">No menu items on record.</p>';
+  }
+  $('menu-items').innerHTML = menuHTML;
+
+  // Custom line items
+  const customs = q.customLineItems || q.custom_line_items || [];
+  if (Array.isArray(customs) && customs.length) {
+    let custHTML = '';
+    customs.forEach(item => {
+      const lineTotal = parseFloat(item.price || 0) * parseInt(item.quantity || 1);
+      custHTML += lineItemRow(item.name || '', item.quantity || 1, lineTotal, '');
+    });
+    $('custom-items').innerHTML = custHTML;
+    show('custom-items-section');
+  }
+
+  // Notes
+  const notes = q.specialInstructions || q.notes || '';
+  if (notes && notes.trim()) {
+    $('notes-text').textContent = notes;
+    show('notes-section');
+  }
+
+  // Summary
+  const subtotal  = parseFloat(q.subtotal || 0);
+  const taxAmt    = parseFloat(q.taxAmount || 0);
+  const delivery  = parseFloat(q.deliveryFee || 0);
+  const total     = parseFloat(q.totalAmount || (subtotal + taxAmt + delivery));
+  const taxPct    = q.taxRate ? (parseFloat(q.taxRate) * 100).toFixed(0) : '13';
+
+  let summaryHTML = `
+    <div class="flex justify-between"><span>Subtotal</span><span class="font-semibold text-on-surface">${fmt(subtotal)}</span></div>`;
+  if (delivery > 0) {
+    summaryHTML += `<div class="flex justify-between"><span>Delivery fee</span><span class="font-semibold text-on-surface">${fmt(delivery)}</span></div>`;
+  }
+  summaryHTML += `<div class="flex justify-between"><span>Tax (${taxPct}%)</span><span class="font-semibold text-on-surface">${fmt(taxAmt)}</span></div>`;
+  $('summary-rows').innerHTML = summaryHTML;
+  $('summary-total').textContent = fmt(total);
+
+  // View-specific UI
+  if (VIEW === 'owner') {
+    show('owner-actions');
+    show('owner-summary-note');
+    const editURL = `https://casava-ai.app.n8n.cloud/webhook/edit-quote?quoteID=${encodeURIComponent(q.quoteID)}&token=${encodeURIComponent(q.token || TOKEN)}`;
+    $('btn-edit-quote').href = editURL;
+  } else {
+    // Customer view — show accept button only if not already accepted
+    if (q.status !== 'customer_accepted') {
+      show('customer-cta');
+    } else {
+      // Already accepted — show confirmed state immediately
+      hide('quote-content');
+      show('state-confirmed');
+      return;
+    }
+  }
+
+  hide('state-loading');
+  show('quote-content');
+}
+
+// ── LOAD ──────────────────────────────────────────────
+async function loadQuote() {
+  if (!QUOTE_ID) {
+    showError('No quote ID found in this link. Please use the link from your email.');
+    return;
+  }
+
+  try {
+    const url = `${QUOTE_DATA_WEBHOOK}?businessID=${encodeURIComponent(BUSINESS_ID)}&quoteID=${encodeURIComponent(QUOTE_ID)}&token=${encodeURIComponent(TOKEN)}&view=${encodeURIComponent(VIEW)}`;
+    const res = await fetch(url);
+
+    if (!res.ok) {
+      showError(`Could not retrieve quote (${res.status}). The link may have expired.`);
+      return;
+    }
+
+    const data = await res.json();
+    const q = Array.isArray(data) ? data[0] : data;
+
+    if (!q || q.error) {
+      showError(q?.error || 'Quote not found.');
+      return;
+    }
+
+    renderQuote(q);
+
+  } catch (err) {
+    showError('Could not connect to the quote service. Please try again or contact us directly.');
+    console.error(err);
+  }
+}
+
+// ── CUSTOMER ACCEPT ───────────────────────────────────
+async function customerAccept() {
+  const btn = $('btn-accept');
+  btn.textContent = 'Confirming…';
+  btn.disabled = true;
+  btn.style.opacity = '0.7';
+
+  try {
+    const res = await fetch(ACCEPT_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ quoteID: QUOTE_ID, token: TOKEN, acceptedAt: new Date().toISOString() })
+    });
+
+    if (res.ok) {
+      hide('quote-content');
+      show('state-confirmed');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      throw new Error(res.status);
+    }
+  } catch (err) {
+    btn.textContent = 'Accept This Quote';
+    btn.disabled = false;
+    btn.style.opacity = '';
+    alert('Something went wrong. Please reply to your quote email to confirm.');
+  }
+}
+
+// ── OWNER APPROVE ─────────────────────────────────────
+async function ownerApprove() {
+  const btn = document.querySelector('#owner-actions button');
+  btn.textContent = 'Approving…';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(APPROVE_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ quoteID: QUOTE_ID, token: TOKEN, businessID: BUSINESS_ID, approvedAt: new Date().toISOString() })
+    });
+
+    if (res.ok) {
+      btn.textContent = '✓ Approved — Email Sent';
+      btn.classList.replace('bg-[#006d42]', 'bg-green-700');
+    } else {
+      throw new Error(res.status);
+    }
+  } catch (err) {
+    btn.textContent = 'Approve Quote';
+    btn.disabled = false;
+    alert('Approval failed. Please try again.');
+  }
+}
+
+// ── ERROR ─────────────────────────────────────────────
+function showError(msg) {
+  $('error-msg').textContent = msg;
+  hide('state-loading');
+  show('state-error');
+}
+
+// ── BOOT ──────────────────────────────────────────────
+loadQuote();
+</script>
+</body>
+</html>
