@@ -189,14 +189,18 @@ Event Details
 <label class="font-label text-xs font-bold uppercase tracking-wider text-outline">Time of Event <span class="text-tertiary">*</span></label>
 <input id="event_time" class="w-full bg-surface-container-high border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all" type="time" required/>
 </div>
-<div class="col-span-full space-y-2">
+<div class="space-y-2">
 <label class="font-label text-xs font-bold uppercase tracking-wider text-outline">Catering Type <span class="text-tertiary">*</span></label>
-<select id="catering_type" onchange="toggleAddressFields()" class="w-full bg-surface-container-high border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all" required>
+<select id="catering_type" onchange="toggleAddressFields(); updateServiceTimeLabel();" class="w-full bg-surface-container-high border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all" required>
 <option value="" disabled selected>Select catering type...</option>
 <option value="Pick Up">Pick Up</option>
 <option value="Delivery">Delivery</option>
 <option value="Full Service Catering">Full Service Catering</option>
 </select>
+</div>
+<div class="space-y-2">
+<label class="font-label text-xs font-bold uppercase tracking-wider text-outline" id="service_time_label">Service Time <span class="text-tertiary">*</span></label>
+<input id="service_time" class="w-full bg-surface-container-high border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all" type="time" required/>
 </div>
 <div class="col-span-full grid grid-cols-1 md:grid-cols-2 gap-8 hidden" id="address-fields">
 <div class="col-span-full space-y-2">
@@ -349,9 +353,9 @@ function renderMenu(menu) {
       let sizesHtml = '';
       item.sizes.forEach(s => {
         sizesHtml += `<div class="flex items-center gap-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
-            <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="${item.itemName}" data-price="${s.price}" data-size="${s.size}" onchange="updateSummary()" type="checkbox"/>
+            <input class="rounded text-primary focus:ring-primary menu-checkbox" data-name="${item.itemName}" data-price="${s.price}" data-size="${s.size}" onchange="toggleQtyVisibility(this); updateSummary();" type="checkbox"/>
             <span class="text-sm font-medium flex-grow">${s.size}</span>
-            <input class="w-12 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty" maxlength="4" min="1" onchange="updateSummary()" type="number" value="0"/>
+            <input class="w-12 p-1 text-xs border-outline-variant rounded bg-surface-container-high menu-qty hidden" maxlength="4" min="1" onchange="updateSummary()" type="number" value="1"/>
             <span class="text-sm font-bold text-primary">$${parseFloat(s.price).toFixed(2)}</span>
           </div>`;
       });
@@ -364,6 +368,27 @@ function renderMenu(menu) {
   });
   container.innerHTML = html;
   updateSummary();
+}
+
+function toggleQtyVisibility(checkbox) {
+  const qtyInput = checkbox.parentElement.querySelector('.menu-qty');
+  if (checkbox.checked) {
+    qtyInput.classList.remove('hidden');
+    if (!qtyInput.value || parseInt(qtyInput.value) < 1) qtyInput.value = 1;
+  } else {
+    qtyInput.classList.add('hidden');
+  }
+}
+
+function updateServiceTimeLabel() {
+  const type = document.getElementById('catering_type').value;
+  const label = document.getElementById('service_time_label');
+  const labels = {
+    'Pick Up': 'Pickup Time',
+    'Delivery': 'Delivery Time',
+    'Full Service Catering': 'Set Up Time (Start)'
+  };
+  label.innerHTML = (labels[type] || 'Service Time') + ' <span class="text-tertiary">*</span>';
 }
 
 function toggleAddressFields() {
@@ -421,7 +446,7 @@ function updateSummary() {
   }
 }
 
-window.onload = function() { prefillFromURL(); updateSummary(); loadMenu(); };
+window.onload = function() { prefillFromURL(); updateSummary(); loadMenu(); updateServiceTimeLabel(); };
 </script>
 
 <script>
@@ -442,6 +467,7 @@ async function submitCateringRequest() {
     eventDate:           document.getElementById("event_date")?.value || "",
     eventTime:           document.getElementById("event_time")?.value || "",
     cateringType:        document.getElementById("catering_type")?.value || "",
+    serviceTime:         document.getElementById("service_time")?.value || "",
     streetAddress:       document.getElementById("street_address")?.value || "",
     city:                document.getElementById("event_city")?.value || "",
     postalCode:          document.getElementById("event_postal")?.value || "",
