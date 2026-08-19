@@ -289,7 +289,12 @@ function applyBranding(data) {
     const quoteCard = document.getElementById('hero-quote-card');
     const sideImg = document.getElementById('hero-side-img');
 
-    if (headline) headline.innerHTML = data.businessName + ' <span class="italic" style="color: var(--brand-primary)">Catering</span>';
+   if (headline) {
+  const alreadyHasCatering = /catering/i.test(data.businessName);
+  headline.innerHTML = alreadyHasCatering
+    ? data.businessName
+    : data.businessName + ' <span class="italic" style="color: var(--brand-primary)">Catering</span>';
+}
     if (subtext) subtext.textContent = 'Tell us about your event and we\'ll take care of the rest.';
     if (badge) badge.textContent = 'Catering Services';
     if (quoteCard) quoteCard.style.display = 'none';
