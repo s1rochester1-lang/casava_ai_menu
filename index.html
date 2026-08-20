@@ -259,12 +259,10 @@ function prefillFromURL() {
 }
 
 function applyBranding(data) {
-  // Brand color
-  const brandColor = data.brandColor || '#6f5c2b';
+  const brandColor = data.brandColor || '#005236';
   CONFIG.brandColor = brandColor;
   document.documentElement.style.setProperty('--brand-primary', brandColor);
 
-  // Business name
   if (data.businessName) {
     CONFIG.businessName = data.businessName;
     const navName = document.getElementById('business-name-nav');
@@ -273,35 +271,37 @@ function applyBranding(data) {
     if (footerName) footerName.textContent = data.businessName;
   }
 
-  // Hero image
   const heroImg = document.getElementById('hero-main-img');
-  if (data.heroImageURL && heroImg) {
-    heroImg.src = data.heroImageURL;
-  } else if (!data.heroImageURL && heroImg && BUSINESS_ID !== 'nutmeg_creole') {
-    heroImg.src = GENERIC_HERO_IMG;
-  }
+  const sideImg = document.getElementById('hero-side-img');
 
-  // Hero copy — generic for non-Nutmeg businesses
-  if (BUSINESS_ID !== 'nutmeg_creole' && data.businessName) {
+  if (BUSINESS_ID === 'nutmeg_creole') {
     const headline = document.getElementById('hero-headline');
     const subtext = document.getElementById('hero-subtext');
     const badge = document.getElementById('hero-badge');
     const quoteCard = document.getElementById('hero-quote-card');
-    const sideImg = document.getElementById('hero-side-img');
+    if (headline) headline.innerHTML = 'The Art of <span class="italic text-primary">Creole</span> Catering';
+    if (subtext) subtext.textContent = 'Elevated Caribbean flavours curated for your most significant moments. From intimate gatherings to grand galas.';
+    if (badge) badge.textContent = 'Established Heritage';
+    if (quoteCard) quoteCard.style.display = '';
+    if (heroImg) heroImg.src = 'https://lh3.googleusercontent.com/aida-public/AB6AXuD6vddLy5FvWuqf0AnJZ75FSHgmhw-o49YR--5rmVe-IHG-5h620PFwFc6CgOgng7M8bA40LOTtlgoxN6G974gyjpEfUt8o3s_7zb01rvt2Sy4wcLd3b2cAyNCz6T6Bopgvriqfiq8_sqL_nUyT9g8gl3_Ufl6VSydxnDxApTbpWcGbDsVm_8F4qZMkBs_BlCBNB4Eu31jLIbCxjoVHCqwjINp12l_mc6C1RmIeu2y1QKesPbK0A-w1K9_rOT0mn2H1gxQS_B9a65E';
+    if (sideImg) sideImg.src = 'https://lh3.googleusercontent.com/aida-public/AB6AXuDqVePzLneHL6Si9Po-KYTjA9VvEmEcabnF1eX4r_psWZE3H2XptPyc0Q7PFYA37iEm8rGdJtILSOjh44E8flc_D9-p6Brpampuxw_jF63xnO-ebBYIedyZsCFyWj5_pDWKT-PmmHFqKQdFzarI6gSFJQZGvI1bDj1bnYuvQKs7iPoGdnF0z42gRXfzZSyw6tqXpLHWDWC3mb7QUZ1z_Oc6iNbdT8NaZfHsqwoKmMqYqH8mR7iP9rxYa7naTIzn7xkTFDU2Pd_AZvA';
+  } else if (data.businessName) {
+    const headline = document.getElementById('hero-headline');
+    const subtext = document.getElementById('hero-subtext');
+    const badge = document.getElementById('hero-badge');
 
-   if (headline) {
-  const alreadyHasCatering = /catering/i.test(data.businessName);
-  headline.innerHTML = alreadyHasCatering
-    ? data.businessName
-    : data.businessName + ' <span class="italic" style="color: var(--brand-primary)">Catering</span>';
-}
+    const alreadyHasCatering = /catering/i.test(data.businessName);
+    if (headline) headline.innerHTML = alreadyHasCatering
+      ? data.businessName
+      : data.businessName + ' <span class="italic" style="color: var(--brand-primary)">Catering</span>';
     if (subtext) subtext.textContent = 'Tell us about your event and we\'ll take care of the rest.';
     if (badge) badge.textContent = 'Catering Services';
-    if (quoteCard) quoteCard.style.display = 'none';
-    if (sideImg && !data.heroImageURL) sideImg.src = GENERIC_HERO_IMG;
+
+    if (heroImg) heroImg.src = data.heroImageURL || GENERIC_HERO_IMG;
+    if (sideImg) sideImg.src = data.heroImageURL || GENERIC_HERO_IMG;
   }
 }
-
+  
 async function loadMenu() {
   try {
     const response = await fetch(`${MENU_WEBHOOK}?businessID=${BUSINESS_ID}`);
