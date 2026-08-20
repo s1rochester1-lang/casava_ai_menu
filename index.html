@@ -301,6 +301,10 @@ function applyBranding(data) {
     if (heroImg) heroImg.src = data.heroImageURL || GENERIC_HERO_IMG;
     if (sideImg) sideImg.src = data.heroImageURL || GENERIC_HERO_IMG;
   }
+  document.getElementById('hero-headline').style.visibility = 'visible';
+  document.getElementById('hero-subtext').style.visibility = 'visible';
+  document.getElementById('hero-badge').style.visibility = 'visible';
+  document.getElementById('business-name-nav').style.visibility = 'visible';
 }
   
 async function loadMenu() {
