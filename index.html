@@ -429,7 +429,7 @@ window.onload = function() { prefillFromURL(); updateSummary(); loadMenu(); upda
 
 <script>
 async function submitCateringRequest() {
-  const WEBHOOK_URL = `https://casava-ai.app.n8n.cloud/webhook/catering-request?businessID=${BUSINESS_ID}`;
+ const WEBHOOK_URL = `https://casava-ai.app.n8n.cloud/webhook/7ddf0485-c10a-4264-99b7-c6f0337389e2/catering-request/${BUSINESS_ID}`;
   const btn = document.getElementById("submitCateringBtn");
   btn.disabled = true;
   btn.textContent = "Sending...";
