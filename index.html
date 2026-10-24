@@ -196,6 +196,11 @@ borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9
 </div>
 </div>
 <div class="col-span-full space-y-2">
+<label class="font-label text-xs font-bold uppercase tracking-wider text-outline">Target Budget ($) <span class="normal-case font-medium tracking-normal text-outline/70">(optional)</span></label>
+<p class="text-xs text-on-surface-variant">Have a budget in mind? Let us know and we'll suggest options that fit.</p>
+<input id="budget" class="w-full md:w-64 bg-surface-container-high border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all" type="text" inputmode="numeric" placeholder="e.g. 1500"/>
+</div>
+<div class="col-span-full space-y-2">
 <label class="font-label text-xs font-bold uppercase tracking-wider text-outline">Special Instructions</label>
 <textarea id="special_instructions" class="w-full bg-surface-container-high border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all resize-none" rows="3" placeholder="Any additional requests or notes..."></textarea>
 </div>
@@ -487,6 +492,7 @@ async function submitCateringRequest() {
     hasAllergies: document.querySelector("input[name='has_allergies']:checked")?.value || "",
     allergies: document.getElementById("allergies")?.value || "",
     specialInstructions: document.getElementById("special_instructions")?.value || "",
+    budget: document.getElementById("budget")?.value || "",
     orderTotal: document.getElementById("total-display")?.textContent?.trim() || "",
     timestamp: new Date().toISOString(),
     menu_items: Array.from(document.querySelectorAll(".menu-checkbox")).filter(cb => cb.checked).map(cb => ({
